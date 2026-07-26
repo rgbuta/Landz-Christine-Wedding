@@ -8,15 +8,16 @@ window.addEventListener('DOMContentLoaded', () => {
   bgMusic.play().catch(() => {
     document.body.addEventListener('click', () => { bgMusic.play(); }, { once: true });
   });
-  loadMessages(); // auto load pag open
-  loadGuests();   // auto load pag open
+  loadMessages(); 
+  loadGuests();
+  setupMobileInputFix(); // fix sa pag scroll pag nag input
 });
 
 function toggleMusic() {
   const bgMusic = document.getElementById('bgMusic');
   const btn = document.getElementById('musicToggle');
-  if (bgMusic.paused) { bgMusic.play(); btn.innerText = "🎵"; }
-  else { bgMusic.pause(); btn.innerText = "🔇"; }
+  if (bgMusic.paused) { bgMusic.play(); btn.innerText = "🔇"; }
+  else { bgMusic.pause(); btn.innerText = "🎵"; }
 }
 
 // COUNTDOWN
@@ -65,8 +66,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwgP8koJWeTY8HTfi7Ju
 // MESSAGE FORM
 document.getElementById('messageForm').addEventListener('submit', e => {
   e.preventDefault();
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  btn.innerText = "Sending...";
+  
   fetch(SCRIPT_URL, { 
     method: 'POST', 
+    mode: 'no-cors',
     body: JSON.stringify({ 
       type: "message", 
       name: document.getElementById('msgName').value, 
@@ -76,33 +82,62 @@ document.getElementById('messageForm').addEventListener('submit', e => {
     document.getElementById('msgSuccess').style.display = 'block'; 
     document.getElementById('messageForm').reset(); 
     setTimeout(()=>document.getElementById('msgSuccess').style.display='none', 3000);
-    loadMessages(); 
-  }).catch(err => console.log(err));
+    setTimeout(loadMessages, 1000); // delay para makasave muna sa sheet
+    btn.disabled = false;
+    btn.innerText = "Send Message";
+  }).catch(err => {
+    console.log(err);
+    btn.disabled = false;
+    btn.innerText = "Send Message";
+  });
 });
 
-// RSVP FORM
+// RSVP FORM - WITH RADIO BUTTONS
 document.getElementById('rsvpForm').addEventListener('submit', e => {
   e.preventDefault();
-  fetch(SCRIPT_URL, { 
-    method: 'POST', 
-    body: JSON.stringify({ 
-      type: "rsvp", 
-      name: document.getElementById('rsvpName').value, 
-      attending: document.getElementById('rsvpAttend').value, 
-      guests: document.getElementById('rsvpGuests').value 
+  const btn = e.target.querySelector('button');
+  const name = document.getElementById('rsvpName').value.trim();
+  const attending = document.querySelector('input[name="attending"]:checked');
+  const guests = document.getElementById('rsvpGuests').value;
+
+  if(!name ||!attending ||!guests){
+    document.getElementById('rsvpError').style.display = 'block';
+    setTimeout(()=>document.getElementById('rsvpError').style.display='none', 3000);
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerText = "Submitting...";
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      type: "rsvp",
+      name: name,
+      attending: attending.value,
+      guests: guests
     })
-  }).then(() => { 
-    document.getElementById('rsvpSuccess').style.display = 'block'; 
-    document.getElementById('rsvpForm').reset(); 
+  }).then(() => {
+    document.getElementById('rsvpSuccess').style.display = 'block';
+    document.getElementById('rsvpForm').reset();
     setTimeout(()=>document.getElementById('rsvpSuccess').style.display='none', 3000);
-    loadGuests(); 
-  }).catch(err => console.log(err));
+    setTimeout(loadGuests, 1000); // delay para makasave muna
+    btn.disabled = false;
+    btn.innerText = "SUBMIT RSVP";
+  }).catch(err => {
+    console.log(err);
+    btn.disabled = false;
+    btn.innerText = "SUBMIT RSVP";
+  });
 });
 
-// LOAD MESSAGES - UPDATED
+// LOAD MESSAGES
 function loadMessages() {
-  fetch(SCRIPT_URL + "?type=messages").then(res => res.json()).then(data => {
-    if(data.length === 0) {
+  fetch(SCRIPT_URL + "?type=messages")
+  .then(res => res.json())
+  .then(data => {
+    if(!data || data.length === 0) {
       document.getElementById('messageWall').innerHTML = "<p>No messages yet. Be the first!</p>";
       return;
     }
@@ -118,29 +153,55 @@ function loadMessages() {
     });
     document.getElementById('messageWall').innerHTML = html; 
   }).catch(err => {
+    console.log("Error loading messages:", err);
     document.getElementById('messageWall').innerHTML = "<p>Error loading messages.</p>";
   });
 }
 
-// LOAD GUESTS - UPDATED
+// LOAD GUESTS + TOTAL COUNT
 function loadGuests() {
-  fetch(SCRIPT_URL + "?type=rsvp").then(res => res.json()).then(data => {
-    const attending = data.filter(g => g.attending === "Yes"); // Yes lang ipapakita
+  fetch(SCRIPT_URL + "?type=rsvp")
+  .then(res => res.json())
+  .then(data => {
+    const attending = data.filter(g => g.attending === "Yes");
+    let guestListDiv = document.getElementById('guestList');
+    let totalGuests = 0;
+
     if(attending.length === 0) {
-      document.getElementById('guestList').innerHTML = "<p>No RSVPs yet.</p>";
-      return;
+      guestListDiv.innerHTML = "<p>No RSVPs yet.</p>";
+    } else {
+      let html = ""; 
+      attending.reverse().forEach(guest => { 
+        let guestCount = parseInt(guest.guests) || 1;
+        totalGuests += guestCount;
+        html += `
+          <div class="guest-card">
+            <span class="guest-name">${guest.name}</span>
+            <span class="guest-count">${guestCount} Guest${guestCount > 1 ? 's' : ''}</span>
+          </div>
+        `; 
+      });
+      guestListDiv.innerHTML = html; 
     }
-    let html = ""; 
-    attending.reverse().forEach(guest => { 
-      html += `
-        <div class="guest-card">
-          <span class="guest-name">${guest.name}</span>
-          <span class="guest-count">${guest.guests} Guest${guest.guests > 1 ? 's' : ''}</span>
-        </div>
-      `; 
-    });
-    document.getElementById('guestList').innerHTML = html; 
+    
+    if(document.getElementById('totalGuestCount')){
+      document.getElementById('totalGuestCount').innerText = totalGuests;
+    }
+    
   }).catch(err => {
+    console.log("Error loading guests:", err);
     document.getElementById('guestList').innerHTML = "<p>Error loading guests.</p>";
+  });
+}
+
+// FIX: PAG NAG INPUT SA RSVP DI NA BABALIK SA TAAS
+function setupMobileInputFix() {
+  const rsvpInputs = document.querySelectorAll('#rsvpForm input, #rsvpForm textarea');
+  rsvpInputs.forEach(input => {
+    input.addEventListener('focus', function() {
+      setTimeout(() => {
+        this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300); // hintay lumabas keyboard muna
+    });
   });
 }
