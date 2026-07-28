@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daddi Landz - Professional Profile & Travels</title>
+    <!-- Google Fonts for Inter & Modern Stylish Logo Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset & Variables */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-color: #38bdf8;
+            --accent-hover: #0ea5e9;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Bar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.2rem 5%;
+            background-color: rgba(15, 23, 42, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Stylish Logo Design for "Daddi Landz" */
+        .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Small Circle Hamburger Menu Button (Hidden on Desktop) */
+        .menu-toggle {
+            display: none;
+            width: 38px;
+            height: 38px;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1001;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background-color: rgba(56, 189, 248, 0.1);
+            transform: scale(1.05);
+        }
+
+        /* Small Hamburger Icon Lines */
+        .hamburger-icon {
+            width: 16px;
+            height: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Transform Hamburger to 'X' when active */
+        .menu-toggle.active .hamburger-icon span:nth-child(1) {
+            transform: translateY(5px) rotate(45deg);
+        }
+
+        .menu-toggle.active .hamburger-icon span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-toggle.active .hamburger-icon span:nth-child(3) {
+            transform: translateY(-5px) rotate(-45deg);
+        }
+
+        /* Main Container for Single-Page Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 5%;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: calc(85vh - 70px);
+            padding: 3rem 0;
+            gap: 3rem;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .welcome-badge {
+            display: inline-block;
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--accent-color);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .hero-content h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero-content h1 span {
+            color: var(--accent-color);
+        }
+
+        .hero-content p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            padding: 0.65rem 1.5rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+        }
+
+        /* Floating Image Style */
+        .hero-image-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .floating-img {
+            width: 280px;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Sections Layout */
+        section {
+            padding: 4rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 0.95rem;
+        }
+
+        /* Grid Layouts for Projects */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 1.75rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .project-card-link:hover .card {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.15);
+        }
+
+        .card h3 {
+            margin-bottom: 0.75rem;
+            font-size: 1.2rem;
+            color: var(--text-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card h3::after {
+            content: "↗";
+            font-size: 1rem;
+            color: var(--accent-color);
+            opacity: 0;
+            transform: translate(-5px, 5px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .project-card-link:hover .card h3::after {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Travel Photo Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .gallery-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(56, 189, 248, 0.15);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .gallery-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .gallery-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), filter 0.4s ease;
+        }
+
+        .gallery-card:hover .gallery-img-wrapper img {
+            transform: scale(1.08);
+            filter: brightness(1.05);
+        }
+
+        .country-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(15, 23, 42, 0.85);
+            color: var(--accent-color);
+            padding: 0.35rem 0.85rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 50px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .gallery-content {
+            padding: 1.5rem;
+        }
+
+        .gallery-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        .gallery-card:hover .gallery-content h3 {
+            color: var(--accent-color);
+        }
+
+        .gallery-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* --- BUSINESS CARD CONTACT STYLES --- */
+        .contact-container {
+            max-width: 550px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(56, 189, 248, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+        }
+
+        .business-card-header h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .business-card-header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        .business-card-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            align-items: center;
+        }
+
+        .card-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: rgba(15, 23, 42, 0.7);
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            width: 100%;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .card-item:hover {
+            border-color: var(--accent-color);
+            background-color: rgba(56, 189, 248, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(56, 189, 248, 0.1);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background-color: rgba(56, 189, 248, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .card-details {
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .card-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.15rem;
+        }
+
+        .card-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color);
+            word-break: break-all;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design: Narrower, Transparent Side Menu Aligned to the Top */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -180px;
+                width: 150px;
+                height: 100vh;
+                background-color: rgba(15, 23, 42, 0.4);
+                flex-direction: column;
+                justify-content: flex-start;
+                align-items: center;
+                padding-top: 5rem;
+                gap: 2rem;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border-left: 1px solid rgba(255, 255, 255, 0.08);
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+                transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                z-index: 1000;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 0.95rem;
+                text-align: center;
+                color: #e2e8f0;
+            }
+
+            .hero {
+                flex-direction: column-reverse;
+                text-align: center;
+                padding: 2rem 0;
+                gap: 2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+
+            .btn-container {
+                justify-content: center;
+            }
+
+            .floating-img {
+                width: 220px;
+                height: 220px;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-container {
+                padding: 1.75rem 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">DADDI LANDZ</div>
+        
+        <!-- Small Circular Hamburger Toggle Button -->
+        <div class="menu-toggle" id="mobile-menu">
+            <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#home" class="nav-item">Home</a></li>
+            <li><a href="#projects" class="nav-item">Projects</a></li>
+            <li><a href="#travels" class="nav-item">Travels</a></li>
+            <li><a href="#contact-section" class="nav-item">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Main Hero Section -->
+        <section id="home" class="hero" style="border-top: none;">
+            <div class="hero-content">
+                <span class="welcome-badge">Welcome to my profile</span>
+                <h1>Hi, I'm <span>Landz</span></h1>
+                <p>A passionate Seafarer, World Traveller, IT Professional, and Self-Taught Web Developer, uniquely blending global exploration, maritime operations, and modern digital technology.</p>
+                <div class="btn-container">
+                    <a href="#projects" class="btn">View Projects</a>
+                    <a href="#contact-section" class="btn btn-outline">Let's Talk</a>
+                </div>
+            </div>
+            <div class="hero-image-container">
+                <img src="circle.jpg" alt="Profile Picture" class="floating-img">
+            </div>
+        </section>
+
+        <!-- Web Projects Section -->
+        <section id="projects">
+            <h2 class="section-title">Web Projects</h2>
+            <p class="section-subtitle">Click any project below to visit its live website link</p>
+            <div class="grid-3">
+                <a href="https://daddilandz.com" target="_blank" class="project-card-link">
+                    <div class="card">
+                        <h3>Wedding Invitation</h3>
+                        <p>A modern, responsive, and fully interactive wedding invitation web application designed to replace traditional paper invitations. This digital platform provides guests with a seamless, elegant experience.</p>
+                    </div>
+                </a>
+
+                <a href="https://example.com/portfolio-blog" target="_blank" class="project-card-link">
+                    <div class="card">
+                        <h3>Portfolio & Blog Hub</h3>
+                        <p>A lightning-fast personal blog system designed with clean code templates, optimized SEO structure, and fluid transitions.</p>
+                    </div>
+                </a>
+
+                <a href="https://example.com/task-manager" target="_blank" class="project-card-link">
+                    <div class="card">
+                        <h3>Task Management App</h3>
+                        <p>A productivity-focused web application utilizing local storage to help users organize daily workflows and prioritize tasks effectively.</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Travels Photo Gallery Section -->
+        <section id="travels">
+            <h2 class="section-title">Travels & Adventures</h2>
+            <p class="section-subtitle">Moments captured and memories made across different countries</p>
+            
+            <div class="gallery-grid">
+                <div class="gallery-card">
+                    <div class="gallery-img-wrapper">
+                        <span class="country-tag">🇨🇭 Switzerland</span>
+                        <img src="switzerland.jpg" alt="Switzerland Alps">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>The Swiss Alps</h3>
+                        <p>Traversed through picturesque alpine trails, experienced pristine snow mountains, and caught breathtaking valley sunsets.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-card">
+                    <div class="gallery-img-wrapper">
+                        <span class="country-tag">🇯🇵 Japan</span>
+                        <img src="japan.jpg" alt="Tokyo Japan">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>Tokyo & Kyoto</h3>
+                        <p>Immersed in deep ancient culture mixed with futuristic technology, historic temples, and incredible local food spots.</p>
+                    </div>
+                </div>
+
+                <div class="gallery-card">
+                    <div class="gallery-img-wrapper">
+                        <span class="country-tag">🇮🇹 Italy</span>
+                        <img src="italy.jpg" alt="Amalfi Coast Italy">
+                    </div>
+                    <div class="gallery-content">
+                        <h3>Amalfi Coast</h3>
+                        <p>Wandered through scenic cliffside coastal towns, historic Mediterranean streets, and gorgeous blue sea horizons.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Business Card Section -->
+        <section id="contact-section">
+            <h2 class="section-title" id="contact">Get In Touch</h2>
+            <p class="section-subtitle">Feel free to reach out through my direct contact channels below.</p>
+            
+            <div class="contact-container">
+                <div class="business-card-header">
+                    <h3>Daddi Landz</h3>
+                    <p>Professional Profile & Travels</p>
+                </div>
+                
+                <div class="business-card-info">
+                    <a href="mailto:rolando.buta.jr@gmail.com" class="card-item">
+                        <div class="card-icon">✉</div>
+                        <div class="card-details">
+                            <div class="card-label">Email Address</div>
+                            <div class="card-value">rolando.buta.jr@gmail.com</div>
+                        </div>
+                    </a>
+
+                    <a href="tel:09927221659" class="card-item">
+                        <div class="card-icon">📞</div>
+                        <div class="card-details">
+                            <div class="card-label">Contact Number</div>
+                            <div class="card-value">09927221659</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Daddi Landz. All rights reserved. Built with passion & code.</p>
+    </footer>
+
+    <!-- JavaScript for the narrow transparent side menu drawer -->
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        mobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    </script>
+
+</body>
+</html>
