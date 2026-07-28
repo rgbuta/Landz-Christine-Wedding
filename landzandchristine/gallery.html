@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Landz & Christine's Wedding 💍</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="gstyle.css">
+    <script type="module" src="galscript.js"></script>
+</head>
+<body>
+
+<div id="nameModal" class="modal">
+    <div class="modal-content">
+        <h2>Landz & Christine's Wedding 💍</h2>
+        <p>Please enter your name to view and upload media to the live wedding feed.</p>
+        <input type="text" id="guestNameInput" placeholder="Enter your full name">
+        <button id="continueBtn" style="margin-bottom: 10px;">Continue</button>
+        <button id="adminLoginBtn" style="width: 50%; background: rgba(0,0,0,0.06); color: var(--text-secondary);">🔐 Admin Login</button>
+    </div>
+</div>
+
+<div id="commentModal">
+    <div class="comment-modal-content">
+        <div class="comment-modal-header">
+            <span>Comments</span>
+            <button id="closeCommentBtn" class="comment-modal-close">&times;</button>
+        </div>
+        <div class="comment-modal-body" id="modalCommentList"></div>
+        <div class="comment-modal-footer">
+            <input type="text" id="modalCommentInput" class="comment-modal-input" placeholder="Write a comment...">
+            <button id="sendCommentBtn" class="comment-modal-send">Post</button>
+        </div>
+    </div>
+</div>
+
+<div id="lightboxModal">
+    <div class="lightbox-header">
+        <div class="lightbox-uploader-info">
+            <div class="lightbox-meta">
+                <div class="lightbox-name" id="lightboxName"></div>
+                <div class="lightbox-counter" id="lightboxCounter">1 of 1</div>
+            </div>
+        </div>
+        <button id="closeLightboxBtn" class="lightbox-close">&times;</button>
+    </div>
+    <div class="lightbox-body">
+        <button id="prevSlideBtn" class="lightbox-nav-btn lightbox-prev">&#10094;</button>
+        <img id="lightboxImage" class="lightbox-content" src="" alt="Full screen preview">
+        <video id="lightboxVideo" class="lightbox-content-video" src="" controls></video>
+        <button id="nextSlideBtn" class="lightbox-nav-btn lightbox-next">&#10095;</button>
+    </div>
+</div>
+
+<div class="app-frame">
+<header>
+    <div class="header-top-bar">
+        <button class="top-btn" id="homeBtn" title="Home">🏠</button>
+        <button class="top-btn" id="exitBtn" title="Exit">✖️</button>
+    </div>
+
+    <h1>Landz & Christine</h1>
+    <div class="header-prompt">Share us your wedding moments..</div>
+    <div class="header-buttons">
+        <button id="photoBtn" class="upload-btn-header"><span>📷</span> +Share Photo</button>
+        <button id="videoBtn" class="upload-btn-header"><span>🎥</span> +Share Video</button>
+    </div>
+</header>
+
+    <input type="file" id="hiddenPhotoInput" accept="image/*" multiple>
+    <input type="file" id="hiddenVideoInput" accept="video/*">
+
+    <div class="container">
+        <div id="pendingUploadCard" class="active-upload-card hidden">
+            <h3 id="selectedFilesCount">Creating Post...</h3>
+            <div class="preview-thumbnails" id="thumbnailPreviewContainer"></div>
+            <textarea id="mediaCaption" placeholder="Say something about this memory..."></textarea>
+            <div class="upload-action-buttons">
+                <button id="cancelBtn" class="btn-cancel">Cancel</button>
+                <button id="btnPost" class="btn-post">Post</button>
+            </div>
+        </div>
+
+        <div id="feed"></div>
+    </div>
+</div>
+
+</body>
+</html>
