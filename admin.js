@@ -1,6 +1,4 @@
 // --- FIREBASE CONFIGURATION ---
-// REPLACE THESE WITH YOUR ACTUAL KEYS FROM FIREBASE CONSOLE
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCemGkC9X-qGXP85yfOHWAaA_U8I8svYu0",
   authDomain: "myprofile1124.firebaseapp.com",
@@ -18,7 +16,6 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 // --- CLOUDINARY CONFIGURATION ---
-// Replace these with your details from your Cloudinary Dashboard
 const CLOUDINARY_UPLOAD_PRESET = "myprofile";
 const CLOUDINARY_CLOUD_NAME = "wotthrqc";
 
@@ -51,7 +48,6 @@ loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
-
     try {
         await auth.signInWithEmailAndPassword(email, password);
     } catch (error) {
@@ -65,24 +61,30 @@ logoutBtn.addEventListener('click', (e) => {
     auth.signOut();
 });
 
-// Cloudinary Upload Function
+// Cloudinary Upload Function - FIXED NA TO BOSS
 async function uploadToCloudinary(file) {
+    const isVideo = file.type.startsWith('video/');
+    const resourceType = isVideo? 'video' : 'image'; // auto detect
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder', 'travelandz');
+    formData.append('resource_type', resourceType); // <- ITO YUNG IMPORTANTE
 
     const statusEl = document.getElementById('upload-status');
     statusEl.innerText = "Uploading media to Cloudinary...";
 
     try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/upload`, {
+        // Ginawa nating dynamic yung URL: image or video
+        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`, {
             method: 'POST',
             body: formData
         });
         const data = await response.json();
         if (data.secure_url) {
             statusEl.innerText = "Upload successful!";
-            return data.secure_url;
+            return {url: data.secure_url, type: resourceType}; // ibabalik natin yung type
         } else {
             throw new Error(data.error?.message || "Upload failed.");
         }
@@ -101,19 +103,21 @@ travelForm.addEventListener('submit', async (e) => {
     const title = document.getElementById('travel-title').value;
     const description = document.getElementById('travel-desc').value;
     const mediaFileInput = document.getElementById('media-file');
-    
+
     let mediaUrl = document.getElementById('media-url').value;
+    let mediaType = "image"; // default
 
     if (mediaFileInput.files.length > 0) {
-        const uploadedUrl = await uploadToCloudinary(mediaFileInput.files[0]);
-        if (uploadedUrl) {
-            mediaUrl = uploadedUrl;
+        const uploaded = await uploadToCloudinary(mediaFileInput.files[0]);
+        if (uploaded) {
+            mediaUrl = uploaded.url;
+            mediaType = uploaded.type;
         } else {
             return;
         }
     }
 
-    if (!travelId && !mediaUrl) {
+    if (!travelId &&!mediaUrl) {
         alert("Please select an image or video file.");
         return;
     }
@@ -123,16 +127,15 @@ travelForm.addEventListener('submit', async (e) => {
         title,
         description,
         mediaUrl: mediaUrl || "",
+        mediaType: mediaType, // <- IDINAGDAG KO TO
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
     };
 
     try {
         if (travelId) {
-            // Update
             await db.collection('travels').doc(travelId).update(travelData);
             alert("Travel post updated successfully!");
         } else {
-            // Create
             await db.collection('travels').add(travelData);
             alert("Travel post added successfully!");
         }
@@ -183,7 +186,7 @@ window.editTravel = function(id, countryTag, title, description, mediaUrl) {
     document.getElementById('travel-title').value = title;
     document.getElementById('travel-desc').value = description;
     document.getElementById('media-url').value = mediaUrl;
-    
+
     formTitle.innerText = "Edit Travel Post";
     document.getElementById('save-btn').innerText = "Update Post";
     cancelEditBtn.style.display = "inline-block";
