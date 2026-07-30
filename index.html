@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daddi Landz - Professional Profile & Travels</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Link to External CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav>
+        <div class="logo">DADDI LANDZ</div>
+        
+        <!-- Small Circular Hamburger Toggle Button -->
+        <div class="menu-toggle" id="mobile-menu">
+            <div class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#home" class="nav-item">Home</a></li>
+            <li><a href="#travels" class="nav-item">Travels</a></li>
+            <li><a href="#projects" class="nav-item">Projects</a></li>
+            <li><a href="#contact-section" class="nav-item">Contact</a></li>
+            <li><a href="admin.html" class="admin-link">Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- Main Hero Section -->
+        <section id="home" class="hero">
+            <div class="hero-content">
+                <span class="welcome-badge">Welcome to my profile</span>
+                <h1>Hi, I'm <span>Landz</span></h1>
+                <p>A passionate Seafarer, World Traveller, IT Professional, and Self-Taught Web Developer, uniquely blending global exploration, maritime operations, and modern digital technology.</p>
+                <div class="btn-container">
+                    <a href="#projects" class="btn">View Projects</a>
+                    <a href="#contact-section" class="btn btn-outline">Let's Talk</a>
+                </div>
+            </div>
+            <div class="hero-image-container">
+                <img src="circle.jpg" alt="Profile Picture" class="floating-img">
+            </div>
+        </section>
+
+        <!-- Travels Photo Gallery Section (Dynamic via Firebase) -->
+        <section id="travels">
+            <div class="section-inner">
+                <h2 class="section-title">Travels & Adventures</h2>
+                <p class="section-subtitle">Moments captured and memories made across different countries</p>
+                
+                <!-- Dito ilalagay ng JavaScript ang mga travel cards mula sa Firebase -->
+                <div class="gallery-grid" id="travels-grid">
+                    <!-- Dynamic Content Loading... -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Web Projects Section -->
+        <section id="projects">
+            <div class="section-inner">
+                <h2 class="section-title">Web Projects</h2>
+                <p class="section-subtitle">Click any project below to visit its live website link</p>
+                <div class="grid-3">
+                    <a href="https://daddilandz.com" target="_blank" class="project-card-link">
+                        <div class="card">
+                            <h3>Wedding Invitation</h3>
+                            <p>A modern, responsive, and fully interactive wedding invitation web application designed to replace traditional paper invitations.</p>
+                        </div>
+                    </a>
+                    <a href="https://example.com/portfolio-blog" target="_blank" class="project-card-link">
+                        <div class="card">
+                            <h3>Portfolio & Blog Hub</h3>
+                            <p>A lightning-fast personal blog system designed with clean code templates, optimized SEO structure, and fluid transitions.</p>
+                        </div>
+                    </a>
+                    <a href="https://example.com/task-manager" target="_blank" class="project-card-link">
+                        <div class="card">
+                            <h3>Task Management App</h3>
+                            <p>A productivity-focused web application utilizing local storage to help users organize daily workflows and prioritize tasks effectively.</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Business Card Section -->
+        <section id="contact-section">
+            <div class="section-inner">
+                <h2 class="section-title" id="contact">Get In Touch</h2>
+                <p class="section-subtitle">Feel free to reach out through my direct contact channels below.</p>
+                
+                <div class="contact-container">
+                    <div class="business-card-header">
+                        <h3>Daddi Landz</h3>
+                        <p>Professional Profile & Travels</p>
+                    </div>
+                    
+                    <div class="business-card-info">
+                        <a href="mailto:rolando.buta.jr@gmail.com" class="card-item">
+                            <div class="card-icon">✉</div>
+                            <div class="card-details">
+                                <div class="card-label">Email Address</div>
+                                <div class="card-value">rolando.buta.jr@gmail.com</div>
+                            </div>
+                        </a>
+                        <a href="tel:09927221659" class="card-item">
+                            <div class="card-icon">📞</div>
+                            <div class="card-details">
+                                <div class="card-label">Contact Number</div>
+                                <div class="card-value">09927221659</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Daddi Landz. All rights reserved. Built with passion & code.</p>
+    </footer>
+
+    <!-- Firebase App (Compat SDK for easier setup) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <!-- Main JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

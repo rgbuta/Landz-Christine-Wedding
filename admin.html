@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daddi Landz - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Outfit:wght@700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-wrapper { 
+            max-width: 900px; 
+            margin: 100px auto; 
+            padding: 2rem; 
+            background: var(--card-bg, #1e293b); 
+            border-radius: 12px; 
+            border: 1px solid rgba(56, 189, 248, 0.2); 
+            color: #fff;
+        }
+        .form-group { 
+            margin-bottom: 1.2rem; 
+        }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            color: var(--text-color, #f8fafc); 
+            font-weight: 600; 
+        }
+        .form-group input, .form-group textarea { 
+            width: 100%; 
+            padding: 0.75rem; 
+            border-radius: 6px; 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
+            background: var(--bg-color, #0f172a); 
+            color: var(--text-color, #f8fafc); 
+            font-size: 1rem; 
+            box-sizing: border-box;
+        }
+        .form-group textarea { 
+            resize: vertical; 
+            height: 100px; 
+        }
+        .travel-item-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(15, 23, 42, 0.6); 
+            padding: 1rem; 
+            margin-bottom: 0.8rem; 
+            border-radius: 6px; 
+            border: 1px solid rgba(255,255,255,0.05); 
+        }
+        .action-btns button { 
+            padding: 0.4rem 0.8rem; 
+            border-radius: 4px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: 600; 
+            margin-left: 0.5rem; 
+        }
+        .btn-edit { 
+            background: #eab308; 
+            color: #000; 
+        }
+        .btn-delete { 
+            background: #ef4444; 
+            color: #fff; 
+        }
+        #admin-panel { 
+            display: none; 
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">ADMIN DASHBOARD</div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="nav-item">View Website</a></li>
+            <li><a href="#" id="logout-btn" style="display:none; color: #ef4444;">Logout</a></li>
+        </ul>
+    </nav>
+
+            <div id="login-section" class="admin-wrapper" style="max-width: 450px;">
+            <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 1.5rem;">Admin Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required placeholder="admin@daddilandz.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn" style="width: 100%;">Login</button>
+            </form>
+        </div>
+
+        <!-- Login Section -->
+
+
+        <!-- Management Panel -->
+        <div id="admin-panel" class="admin-wrapper">
+            <h2 class="section-title" id="form-title" style="font-size: 1.5rem;">Add New Travel Post</h2>
+            <form id="travel-form">
+                <input type="hidden" id="travel-id">
+                <div class="form-group">
+                    <label for="country-tag">Country Tag (e.g., 🇬🇱 Greenland)</label>
+                    <input type="text" id="country-tag" required placeholder="🇬🇱 Greenland">
+                </div>
+                <div class="form-group">
+                    <label for="travel-title">City / Location Title (e.g., Nanortalik)</label>
+                    <input type="text" id="travel-title" required placeholder="Nanortalik">
+                </div>
+                <div class="form-group">
+                    <label for="travel-desc">Description</label>
+                    <textarea id="travel-desc" required placeholder="Write a brief description..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="media-file">Upload Photo / Video (Powered by Cloudinary)</label>
+                    <input type="file" id="media-file" accept="image/*,video/*">
+                    <input type="hidden" id="media-url">
+                    <div id="upload-status" style="font-size: 0.85rem; color: #38bdf8; margin-top: 5px;"></div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button type="submit" class="btn" id="save-btn">Save Travel Post</button>
+                    <button type="button" class="btn btn-outline" id="cancel-edit" style="display:none;">Cancel Edit</button>
+                </div>
+            </form>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 2rem 0;">
+
+            <h3 style="margin-bottom: 1rem;">Manage Existing Travels</h3>
+            <div id="admin-travels-list">
+                <!-- List will populate dynamically via admin.js -->
+            </div>
+        </div>
+
+
+    <!-- Firebase SDKs (App -> Auth -> Firestore) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Admin Custom JavaScript -->
+    <script src="admin.js"></script>
+</body>
+</html>
