@@ -16,6 +16,7 @@ const db = firebase.firestore();
 
 const travelsGrid = document.getElementById('travels-grid');
 
+// ITO PA DIN YUNG SUSI PARA SA .HEIC
 function getDisplayUrl(url) {
     if(!url) return '';
     return url.replace('/upload/', '/upload/f_auto,q_auto/');
@@ -23,26 +24,32 @@ function getDisplayUrl(url) {
 
 async function loadTravelPosts() {
     if (!travelsGrid) return;
-    travelsGrid.innerHTML = 'Loading...';
+    travelsGrid.innerHTML = '<p style="color: #94a3b8; text-align: center; grid-column: 1/-1;">Loading travel posts...</p>';
 
     try {
         const snapshot = await db.collection('travels').orderBy('createdAt', 'desc').get();
+        if (snapshot.empty) {
+            travelsGrid.innerHTML = '<p style="color: #94a3b8; text-align: center; grid-column: 1/-1;">No travel posts found.</p>';
+            return;
+        }
         travelsGrid.innerHTML = '';
 
         snapshot.forEach(doc => {
             const data = doc.data();
-            const finalUrl = getDisplayUrl(data.mediaUrl);
-            
             const card = document.createElement('div');
-            card.style.cssText = 'border:1px solid red; margin:10px; padding:10px;'; // para makita natin yung box
-            card.className = 'gallery-card';
+            card.className = 'gallery-card'; // BINALIK KO NA SA DATING CLASS
             
-            // IPAPAKITA NATIN YUNG URL PARA MA-TEST
+            const finalUrl = getDisplayUrl(data.mediaUrl);
+
+            let mediaHTML = '';
+            if (data.mediaUrl) {
+                mediaHTML = `<img src="${finalUrl}" alt="${data.title || ''}" loading="lazy">`;
+            }
+
             card.innerHTML = `
-                <p style="font-size:10px; word-break:break-all;">URL: ${finalUrl}</p>
                 <div class="gallery-img-wrapper">
                     ${data.countryTag? `<span class="country-tag">${data.countryTag}</span>` : ''}
-                    <img src="${finalUrl}" alt="${data.title || ''}" style="width:100%; height:200px; object-fit:cover; border:2px solid blue;">
+                    ${mediaHTML}
                 </div>
                 <div class="gallery-content">
                     <h3>${data.title || 'Untitled'}</h3>
@@ -53,7 +60,8 @@ async function loadTravelPosts() {
         });
 
     } catch (error) {
-        travelsGrid.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        console.error("Firestore Error:", error);
+        travelsGrid.innerHTML = `<p style="color: #ef4444;">Failed to load: ${error.message}</p>`;
     }
 }
 document.addEventListener('DOMContentLoaded', loadTravelPosts);
