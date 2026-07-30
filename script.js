@@ -27,6 +27,14 @@ if (mobileMenu && navLinks) {
     });
 }
 
+// Helper para i-force convert sa jpg si cloudinary
+function getDisplayUrl(url) {
+    if(!url) return '';
+    // Kung.heic o ibang format, add natin.jpg sa dulo
+    // Para auto convert ni cloudinary
+    return url + '.jpg';
+}
+
 // Fetch and Display Travel Posts from Firestore
 async function loadTravelPosts() {
     if (!travelsGrid) return;
@@ -41,18 +49,15 @@ async function loadTravelPosts() {
             return;
         }
 
-        travelsGrid.innerHTML = ''; // Clear loading message
+        travelsGrid.innerHTML = '';
 
         snapshot.forEach(doc => {
             const data = doc.data();
             const card = document.createElement('div');
-            
-            // 1. Ginamit ang .gallery-card para sa tamang CSS styles
             card.className = 'gallery-card';
 
-            // Detect if media is a video or image
             const isVideo = data.mediaUrl && (
-                data.mediaUrl.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) || 
+                data.mediaUrl.match(/\.(mp4|webm|ogg|mov)(\?.*)?$/i) ||
                 data.mediaUrl.includes('/video/upload/')
             );
 
@@ -62,20 +67,19 @@ async function loadTravelPosts() {
                     mediaHTML = `
                         <video controls style="width: 100%; height: 100%; object-fit: cover;">
                             <source src="${escapeHtml(data.mediaUrl)}" type="video/mp4">
-                            Your browser does not support video playback.
                         </video>
                     `;
                 } else {
+                    // DITO YUNG BINAGO: ginamit natin getDisplayUrl
                     mediaHTML = `
-                        <img src="${escapeHtml(data.mediaUrl)}" alt="${escapeHtml(data.title || '')}" loading="lazy">
+                        <img src="${escapeHtml(getDisplayUrl(data.mediaUrl))}" alt="${escapeHtml(data.title || '')}" loading="lazy">
                     `;
                 }
             }
 
-            // 2. Inayos ang HTML structure para sa country tag, image wrapper, at gallery content
             card.innerHTML = `
                 <div class="gallery-img-wrapper">
-                    ${data.countryTag ? `<span class="country-tag">${escapeHtml(data.countryTag)}</span>` : ''}
+                    ${data.countryTag? `<span class="country-tag">${escapeHtml(data.countryTag)}</span>` : ''}
                     ${mediaHTML}
                 </div>
                 <div class="gallery-content">
@@ -93,19 +97,11 @@ async function loadTravelPosts() {
     }
 }
 
-// Helper Function to prevent HTML injection
 function escapeHtml(str) {
     if (!str) return '';
     return String(str).replace(/[&<>"']/g, function(m) {
-        return {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        }[m];
+        return {'&': '&amp;','<': '&lt;','>': '&gt;','"': '&quot;',"'": '&#039;'}[m];
     });
 }
 
-// Load posts once DOM is ready
 document.addEventListener('DOMContentLoaded', loadTravelPosts);
