@@ -9,212 +9,77 @@ const firebaseConfig = {
   measurementId: "G-2KEP28KTLR"
 };
 
+// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 const db = firebase.firestore();
-const auth = firebase.auth();
 
-// --- CLOUDINARY CONFIGURATION ---
-const CLOUDINARY_UPLOAD_PRESET = "myprofile";
-const CLOUDINARY_CLOUD_NAME = "wotthrqc";
+// --- CLOUDINARY CONFIG ---
+const cloudName = "wotthrqc";
+const uploadPreset = "myprofile";
 
-// DOM Elements
-const loginSection = document.getElementById('login-section');
-const adminPanel = document.getElementById('admin-panel');
-const loginForm = document.getElementById('login-form');
-const logoutBtn = document.getElementById('logout-btn');
-const travelForm = document.getElementById('travel-form');
-const adminTravelsList = document.getElementById('admin-travels-list');
-const cancelEditBtn = document.getElementById('cancel-edit');
-const formTitle = document.getElementById('form-title');
-
-// Auth State Observer
-auth.onAuthStateChanged(user => {
-    if (user) {
-        loginSection.style.display = 'none';
-        adminPanel.style.display = 'block';
-        logoutBtn.style.display = 'block';
-        fetchAdminTravels();
-    } else {
-        loginSection.style.display = 'block';
-        adminPanel.style.display = 'none';
-        logoutBtn.style.display = 'none';
-    }
-});
-
-// Login Handler
-loginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    try {
-        await auth.signInWithEmailAndPassword(email, password);
-    } catch (error) {
-        alert("Login Failed: " + error.message);
-    }
-});
-
-// Logout Handler
-logoutBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    auth.signOut();
-});
-
-// Cloudinary Upload Function - FIXED NA TO BOSS
+// UPLOAD FUNCTION - FORCE CONVERT TO JPG
 async function uploadToCloudinary(file) {
-    const isVideo = file.type.startsWith('video/');
-    const resourceType = isVideo? 'video' : 'image'; // auto detect
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    formData.append('folder', 'travelandz');
-    formData.append('resource_type', resourceType); // <- ITO YUNG IMPORTANTE
-
-    const statusEl = document.getElementById('upload-status');
-    statusEl.innerText = "Uploading media to Cloudinary...";
+    formData.append("file", file);
+    formData.append("upload_preset", uploadPreset);
+    formData.append("folder", "travelandz");
+    formData.append("format", "jpg"); // ITO ANG SUSI: Force convert to JPG
 
     try {
-        // Ginawa nating dynamic yung URL: image or video
-        const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${resourceType}/upload`, {
-            method: 'POST',
+        const response = await fetch(url, {
+            method: "POST",
             body: formData
         });
         const data = await response.json();
-        if (data.secure_url) {
-            statusEl.innerText = "Upload successful!";
-            return {url: data.secure_url, type: resourceType}; // ibabalik natin yung type
-        } else {
-            throw new Error(data.error?.message || "Upload failed.");
+
+        if (!response.ok) {
+            throw new Error(data.error.message || "Upload failed");
         }
+
+        console.log("Upload Success:", data.secure_url);
+        return data.secure_url; // Dapat.jpg na yung dulo nito
     } catch (error) {
-        alert("Cloudinary Error: " + error.message);
-        statusEl.innerText = "";
-        return null;
+        console.error("Cloudinary upload error:", error);
+        throw error;
     }
 }
 
-// Handle Form Submit (Add or Edit)
-travelForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const travelId = document.getElementById('travel-id').value;
-    const countryTag = document.getElementById('country-tag').value;
-    const title = document.getElementById('travel-title').value;
-    const description = document.getElementById('travel-desc').value;
-    const mediaFileInput = document.getElementById('media-file');
+// FORM SUBMIT
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('travelForm');
+    if(form){
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('mediaInput').files[0];
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const countryTag = document.getElementById('countryTag').value;
 
-    let mediaUrl = document.getElementById('media-url').value;
-    let mediaType = "image"; // default
+            if (!file) return alert("Please select a file");
+            if (!title) return alert("Please enter a title");
 
-    if (mediaFileInput.files.length > 0) {
-        const uploaded = await uploadToCloudinary(mediaFileInput.files[0]);
-        if (uploaded) {
-            mediaUrl = uploaded.url;
-            mediaType = uploaded.type;
-        } else {
-            return;
-        }
-    }
+            try {
+                alert("Uploading...");
+                const mediaUrl = await uploadToCloudinary(file);
 
-    if (!travelId &&!mediaUrl) {
-        alert("Please select an image or video file.");
-        return;
-    }
-
-    const travelData = {
-        countryTag,
-        title,
-        description,
-        mediaUrl: mediaUrl || "",
-        mediaType: mediaType, // <- IDINAGDAG KO TO
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    try {
-        if (travelId) {
-            await db.collection('travels').doc(travelId).update(travelData);
-            alert("Travel post updated successfully!");
-        } else {
-            await db.collection('travels').add(travelData);
-            alert("Travel post added successfully!");
-        }
-        resetForm();
-        fetchAdminTravels();
-    } catch (error) {
-        alert("Error saving data: " + error.message);
+                // Save to Firestore
+                await db.collection("travels").add({
+                    title: title,
+                    description: description,
+                    countryTag: countryTag,
+                    mediaUrl: mediaUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert("Upload Success!");
+                form.reset();
+                location.reload();
+            } catch (err) {
+                alert("Upload Failed: " + err.message);
+            }
+        });
     }
 });
-
-// Fetch Travels for Admin Panel Listing
-async function fetchAdminTravels() {
-    adminTravelsList.innerHTML = '<p>Loading items...</p>';
-    try {
-        const snapshot = await db.collection('travels').orderBy('createdAt', 'desc').get();
-        adminTravelsList.innerHTML = '';
-
-        if (snapshot.empty) {
-            adminTravelsList.innerHTML = '<p>No travel entries found.</p>';
-            return;
-        }
-
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const row = document.createElement('div');
-            row.className = 'travel-item-row';
-            row.innerHTML = `
-                <div>
-                    <strong>${data.title}</strong> (${data.countryTag})
-                </div>
-                <div class="action-btns">
-                    <button class="btn-edit" onclick="editTravel('${doc.id}', '${data.countryTag}', '${data.title}', '${data.description}', '${data.mediaUrl}')">Edit</button>
-                    <button class="btn-delete" onclick="deleteTravel('${doc.id}')">Delete</button>
-                </div>
-            `;
-            adminTravelsList.appendChild(row);
-        });
-    } catch (error) {
-        console.error(error);
-        adminTravelsList.innerHTML = '<p>Error loading posts.</p>';
-    }
-}
-
-// Edit Travel Pre-fill
-window.editTravel = function(id, countryTag, title, description, mediaUrl) {
-    document.getElementById('travel-id').value = id;
-    document.getElementById('country-tag').value = countryTag;
-    document.getElementById('travel-title').value = title;
-    document.getElementById('travel-desc').value = description;
-    document.getElementById('media-url').value = mediaUrl;
-
-    formTitle.innerText = "Edit Travel Post";
-    document.getElementById('save-btn').innerText = "Update Post";
-    cancelEditBtn.style.display = "inline-block";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-// Delete Travel
-window.deleteTravel = async function(id) {
-    if (confirm("Are you sure you want to delete this travel item?")) {
-        try {
-            await db.collection('travels').doc(id).delete();
-            alert("Deleted successfully!");
-            fetchAdminTravels();
-        } catch (error) {
-            alert("Error deleting: " + error.message);
-        }
-    }
-};
-
-// Cancel Edit Mode
-cancelEditBtn.addEventListener('click', resetForm);
-
-function resetForm() {
-    travelForm.reset();
-    document.getElementById('travel-id').value = "";
-    document.getElementById('media-url').value = "";
-    document.getElementById('upload-status').innerText = "";
-    formTitle.innerText = "Add New Travel Post";
-    document.getElementById('save-btn').innerText = "Save Travel Post";
-    cancelEditBtn.style.display = "none";
-}
