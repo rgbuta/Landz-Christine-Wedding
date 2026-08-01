@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Landz & Christine Wedding Invitation</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+  <source src="canthelp.mp3" type="audio/mpeg">
+</audio>
+<button class="music-toggle" id="musicToggle" onclick="toggleMusic()">🎵</button>
+
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<nav class="nav" id="navMenu">
+  <a href="#hero" onclick="closeMenu()">Home</a>
+  <a href="#story" onclick="closeMenu()">Our Story</a>
+  <a href="#countdown" onclick="closeMenu()">Countdown</a>
+  <a href="#gallery" onclick="closeMenu()">Gallery</a>
+  <a href="#video" onclick="closeMenu()">Video Teaser</a>
+  <a href="#event" onclick="closeMenu()">Event Details</a>
+  <a href="#entourage" onclick="closeMenu()">Wedding Entourage</a>
+  <a href="#sponsors" onclick="closeMenu()">Principal Sponsors</a>
+  <a href="#attire" onclick="closeMenu()">Attire & Motif</a>
+  <a href="#messages" onclick="closeMenu()">Send Message</a>
+  <a href="#wall" onclick="closeMenu()">Love Wall</a>
+  <a href="#rsvp" onclick="closeMenu()">RSVP</a>
+  <a href="#guestlist" onclick="closeMenu()">Guest List</a>
+  <a href="gallery.html" onclick="closeMenu()">Guest Gallery</a>
+</nav>
+
+<section id="hero" class="hero">
+  <p>Together with their families, request the honor of your presence</p>
+  <img src="circle.jpg" class="circle-photo" alt="Landz and Christine">
+  <h1>Landz <span>&</span> Christine</h1>
+  <p class="quote">In honor and gratitude to God who brought us together</p>
+  <p>November 8, 2026 • 10:00AM</p>
+  <p class="sponsors-subtitle">Seventh Day Adventist Church <br> Panabo City</p>
+  <div>
+    <button class="btn btn-message" onclick="location.href='#messages'">💬 SEND MESSAGE</button>
+    <button class="btn" onclick="location.href='#rsvp'">♡ RSVP</button>
+  </div>
+</section>
+
+<section id="story" class="section">
+  <p class="sponsors-subtitle">HOW IT ALL BEGAN</p>
+  <h1>Our Love Story</h1>
+  <div class="card">
+    <h3 class="entourage-note">How we met</h3>
+    <p>Our story began on the last night of the Araw ng Bayugan 3 celebration in 2024. Amid the lights, music, and excitement of the disco party, two strangers crossed paths without knowing that one simple encounter would change both of our lives forever. What started as a casual meeting quickly grew into meaningful conversations, genuine laughter, and a connection that felt effortless. That unforgettable night became the beginning of our beautiful love story.
+  <h3 class="entourage-note">Our Love Story</h3>
+    <p>On June 15, 2024, we officially became a couple. Not long after, our love was tested by distance as we embraced a long-distance relationship. Though miles often separated us, our hearts remained close. Through countless video calls, heartfelt messages, unwavering trust, and constant prayers, we learned that true love isn’t measured by distance, but by commitment. Every challenge strengthened our bond and reminded us that the best things in life are always worth waiting for. Today, we stand hand in hand, ready to say “I do,” promising to choose each other every single day. This is not the end of our story—it’s only the beginning of our forever.</p>
+      <h3 class="entourage-note">The Proposal</h3>
+    <p>On January 2, 2026, while celebrating the extended celebration of New Year. We had no idea that one of the most unforgettable moments of our life was about to happen. As the rain gently fell from the sky, the heartfelt proposal happen. Standing there in the rain, surrounded by the people we love, the question that changed our lives forever asked . It wasn’t a perfect sunny day but it was perfectly ours. The rain made that moment even more magical, reminding us that love shines brightest even through life’s storms.</p>
+      </div>
+</section>
+
+<section id="countdown" class="section">
+  <p class="sponsors-subtitle">COUNTDOWN</p>
+  <h1 class="countdown-title">Our Special Day</h1>
+  <p class="countdown-sub">Every moment brings us closer to forever</p>
+  <div class="countdown">
+    <div class="time-box"><span id="days">00</span><label>DAYS</label></div>
+    <div class="time-box"><span id="hours">00</span><label>HOURS</label></div>
+    <div class="time-box"><span id="mins">00</span><label>MINUTES</label></div>
+    <div class="time-box"><span id="secs">00</span><label>SECONDS</label></div>
+  </div>
+  <div class="divider"><span>❤️</span></div>
+  <h2 class="save-date">SAVE THE DATE</h2>
+  <div class="divider"><span>❤️</span></div>
+  <div class="date-display">
+    <div class="month">November</div>
+    <div class="date-row">
+      <span class="day">08</span>
+      <span class="divider-line"></span>
+      <span class="year">2026</span>
+    </div>
+  </div>
+  <div class="divider"><span>❤️</span></div>
+  <p class="time">10:00 AM</p>
+  <div class="divider"><span>❤️</span></div>
+</section>
+
+<section id="gallery" class="section">
+  <p class="sponsors-subtitle">OUR MOMENTS</p>
+  <h1>Our Gallery</h1>
+  <div class="divider-heart">
+    <span></span><span class="heart">❤️</span><span></span>
+  </div>
+  <p class="countdown-sub">Every picture tells our story</p>
+  <div class="gallery-wrap">
+    <div class="gallery-view">
+      <div class="carousel" id="carousel">
+        <div class="carousel-item active"><img src="a.jpg" alt="Gallery 1"></div>
+        <div class="carousel-item"><img src="b.jpg" alt="Gallery 2"></div>
+        <div class="carousel-item"><img src="c.jpg" alt="Gallery 3"></div>
+        <div class="carousel-item"><img src="d.jpg" alt="Gallery 4"></div>
+        <div class="carousel-item"><img src="e.jpg" alt="Gallery 5"></div>
+        <div class="carousel-item"><img src="f.jpg" alt="Gallery 6"></div>
+        <div class="carousel-item"><img src="j.jpg" alt="Gallery 7"></div>
+      </div>
+    </div>
+    <button class="carousel-btn prev-btn" onclick="moveSlide(-1)">❮</button>
+    <button class="carousel-btn next-btn" onclick="moveSlide(1)">❯</button>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<section id="video" class="section">
+  <p class="sponsors-subtitle">WATCH US</p>
+  <h1>Video Teaser</h1>
+  <div class="divider-heart">
+    <span></span><span class="heart">❤️</span><span></span>
+  </div>
+  <p class="countdown-sub">Prenup teaser coming soon...</p>
+  <div class="video-wrap">
+    <iframe src="https://www.youtube.com/embed/fu9yk7gCTbc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</section>
+
+<section id="event" class="section">
+  <p class="sponsors-subtitle">JOIN US</p>
+  <h1>Event Details</h1>
+  <div class="event-grid">
+    <div class="card">
+      <h3>💒 Ceremony</h3>
+      <p>10:00 AM<br>Seventh Day Adventist Church - Panabo City</p>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7409.800427925737!2d125.68244147465576!3d7.310015813524769!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f945b1ee7bb1ed%3A0x199f98403da8c956!2sPanabo%20Seventh%20Day%20Adventist%20Church!5e1!3m2!1sen!2sus!4v1785029867495!5m2!1sen!2sus" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Ceremony Location Map" allowfullscreen></iframe>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🥂 Reception</h3>
+      <p>12:00 PM<br>Casa De 828 - Panabo City</p>
+      <div class="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3704.893775064773!2d125.68202687465593!3d7.310792013514766!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x32f945b3ad4ef181%3A0xb904d877cd36fd81!2sCasa%20de%20828!5e1!3m2!1sen!2sus!4v1785029966444!5m2!1sen!2sus" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" title="Reception Location Map" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UPDATED ENTOURAGE -->
+<section id="entourage" class="section">
+  <p class="sponsors-subtitle">THOSE WHO STAND WITH US</p>
+  <h1>Wedding Entourage</h1>
+  <div class="divider-heart">
+    <span></span><span class="heart">❤️</span><span></span>
+  </div>
+
+  <div class="entourage-card">
+    
+    <p class="entourage-label">THE COUPLE</p>
+    <div class="entourage-couple">
+      <div>
+        <h3>Landz</h3>
+        <p>GROOM</p>
+      </div>
+      <div>
+        <h3>Christine</h3>
+        <p>BRIDE</p>
+      </div>
+    </div>
+
+    <div class="entourage-divider"><span></span><span></span><span></span></div>
+
+    <div class="entourage-grid">
+      <div>
+        <p class="entourage-label">PARENTS OF THE GROOM</p>
+        <p><b>Ivyrocelle G.Buta</b><br><span>SISTER</span></p>
+        <p><b>Cecelia Buta</b><br><span>MOTHER</span></p>
+      </div>
+      <div>
+        <p class="entourage-label">PARENTS OF THE BRIDE</p>
+        <p><b>Dante Abogadie</b><br><span>FATHER</span></p>
+        <p><b>Emily Abogadie</b><br><span>MOTHER</span></p>
+      </div>
+    </div>
+
+    <div class="entourage-divider"><span></span><span></span><span></span></div>
+
+    <p class="entourage-note">To assist us in our needs</p>
+
+    <div class="entourage-grid">
+      <div>
+        <p class="entourage-label">BEST MAN</p>
+        <p><b>Charles Jay G. Momo</b></p>
+      </div>
+      <div>
+        <p class="entourage-label">MAID OF HONOR</p>
+        <p><b>Grace A. Abogadie</b></p>
+      </div>
+    </div>
+
+    <div class="entourage-divider"><span></span><span></span><span></span></div>
+
+    <div class="entourage-grid">
+      <div>
+    <p class="entourage-label">GROOMSMEN</p>
+    <p><b>Clavin Jake Abogadie</b></p>
+    <p><b>Dante Abogadie Jr.</b></p>
+    <p><b>Gio Abogadie</b></p>
+    <p><b>Joemart Casana</b></p>
+    <p><b>Rexzyll Loi S. Sulpot</b></p>
+    <p><b>Billy Oplenaria Buta III</b></p>
+</div>
+<div>
+    <p class="entourage-label">BRIDESMAIDS</p>
+    <p><b>Jennibeb Gambalana</b></p>
+    <p><b>Jedidiah Clair Momo</b></p>
+    <p><b>Kate Odrigue</b></p>
+    <p><b>Ruvy Jane Castillo</b></p>
+    <p><b>Shei-Honey Lapay</b></p>
+    <p><b>Hazel Jean Abogadie</b></p>
+</div>
+    </div>
+
+    <div class="entourage-divider"><span></span><span></span><span></span></div>
+
+   <p class="entourage-label">FLOWER GIRLS</p>
+<p><b>Gwyneth Joy L.Buta</b></p>
+<p><b>Sofia Faith E. Buta</b></p>
+<p><b>Fawziya Blythe Abogadie</b></p>
+<p><b>Glory Joyce Benido</b></p>
+
+    <div class="entourage-divider"><span></span><span></span><span></span></div>
+
+    <div class="entourage-grid">
+      <div>
+        <p class="entourage-label">BIBLE BEARER</p>
+        <p><b>Izaire Vyl Buta</b></p>
+      </div>
+      <div>
+        <p class="entourage-label">RING BEARER</p>
+        <p><b>Healary Kian O. Buta</b></p>
+      </div>
+    </div>
+    <div class="entourage-grid">
+    <div>
+        <p class="entourage-label">COIN BEARER</p>
+        <p><b>Darlin Mae M. Danda</b></p>
+      </div>
+     <div>
+        <p class="entourage-label">LITTLE BRIDE</p>
+        <p><b>Heziannah Irean Odrigue</b></p>
+      </div>
+    </div>
+  <div class="entourage-divider"><span></span><span></span><span></span></div>
+    <p class="entourage-note">To support us along the way</p>
+    <p class="entourage-label">To Light our Path</p>
+<div class="entourage-grid">
+      <div>
+        <p><b>Mr. Concordio B. Momo Jr.</b></p>
+      </div>
+      <div>
+        <p><b>Mrs. Jeocelyn G. Momo</b></p>
+      </div>
+    </div>
+     <div class="entourage-divider"><span></span><span></span><span></span></div>
+    <p class="entourage-label">To Bind Us Together</p>
+<div class="entourage-grid">
+      <div>
+        <p><b>Mr. Louigie Palma</b></p>
+      </div>
+      <div>
+        <p><b>Mrs. Jenny Palma</b></p>
+      </div>
+    </div>
+     <div class="entourage-divider"><span></span><span></span><span></span></div>
+    <p class="entourage-label">To cloth us one</p>
+<div class="entourage-grid">
+      <div>
+        <p><b>Mr. Ryl John Benido</b></p>
+      </div>
+      <div>
+        <p><b>Mrs. Jovelyn Benido</b></p>
+      </div>
+    </div>
+</section>
+
+<section id="sponsors" class="section sponsors-section">
+  <p class="sponsors-subtitle">OUR BELOVED GODPARENTS</p>
+  <h1 class="sponsors-title">Principal Sponsors</h1>
+  <div class="divider-heart">
+    <span></span><span class="heart">❤️</span><span></span>
+  </div>
+  <div class="sponsors-card">
+    <div class="sponsors-header">
+      <h3>NINONG</h3>
+      <h3>NINANG</h3>
+    </div>
+    <div class="sponsors-list">
+      <div class="sponsor-pair"><p>Mr. Rodrigo O. Camasin</p><p>Mrs. Gloria Lazarte</p></div>
+      <div class="sponsor-pair"><p>Mr. Billy Buta Jr.  </p><p>Mrs. Rosalyn Buta</p></div>
+      <div class="sponsor-pair"><p>Mr. Ricky T. Delco</p><p>Atty. Tata Moral Romano</p></div>
+      <div class="sponsor-pair"><p>Mr. Anthony Tipon</p><p>Mrs. Jovelyn Tipon</p></div>
+      <div class="sponsor-pair"><p>Mr. Donald Alvarez</p><p>Mrs. Melaser Alvarez</p></div>
+      <div class="sponsor-pair"><p>Mr. Joel Campion</p><p>Atty.Yasmin Campion</p></div>
+      <div class="sponsor-pair"><p>Mr. Reggie Abogadie Sr.</p><p>Mrs. Rosemarie Abogadie</p></div>
+      <div class="sponsor-pair"><p>Mr. Rogie Alimes</p><p>Mrs. Maechellanie Siene Alimes</p></div>
+      <div class="sponsor-pair"><p>Mr. Rene Carsula</p><p>Mrs. Jeocelyn Carsula</p></div>
+      <div class="sponsor-pair"><p>Mr. Edgar B. Matulac</p><p>Mrs. Dominga Matulac</p></div>
+      <div class="sponsor-pair"><p>Mr. Simplicio Cabahug Jr.</p><p>Mrs. Carina Cabahug</p></div>
+      <div class="sponsor-pair"><p>Mr. Ronilo Abogadie</p><p>Mrs. Rosyjane Quicos</p></div>
+      <div class="sponsor-pair"><p>Mr. Armando Hambala</p><p>Mrs. Estrellita T. Patubo</p></div>
+      <div class="sponsor-pair"><p>Mr. Michael Ray Hambala</p><p>Mrs. Jubie Nardo</p></div>
+      <div class="sponsor-pair"><p>Mr. Rene Buta</p><p>Mrs. Emily Bascon</p></div>
+      <div class="sponsor-pair"><p>Mr. Fortunato Gardose</p><p>Mrs. Anna Marie Andales</p></div>
+      <div class="sponsor-pair"><p></p><p>Mrs. Lourdes B. Vito</p></div>
+      <div class="sponsor-pair"><p></p><p>Mrs. Cleda Blis Arbis</p></div>
+      <div class="sponsor-pair"><p></p><p>Mrs. Anna B. Boro</p></div>
+      
+      
+  </div>
+</section>
+
+<section id="attire" class="section attire-section">
+  <div class="attire-icon">👔</div>
+  <p class="sponsors-subtitle">WHAT TO WEAR</p>
+  <h1 class="attire-title">Attire & Motif</h1>
+  <div class="attire-card">
+    <p class="dresscode-label">DRESS CODE</p>
+    <h2 class="dresscode-title">Formal | Semi-formal</h2>
+    <p class="dresscode-desc">
+      Ladies: Formal or semi-formal dress in Emerald, Light Green, or White.<br>
+      Gentlemen: Formal or smart formal.<br>
+      Please avoid wearing the same shade as the Bride.
+    </p>
+    <div class="color-icon">🎨</div>
+    <p class="color-label">COLOR MOTIF</p>
+    <div class="motif-colors">
+      <div class="color-item"><div class="color-circle emerald"></div><p>#046A38</p></div>
+      <div class="color-item"><div class="color-circle lightgreen"></div><p>#90EE90</p></div>
+      <div class="color-item"><div class="color-circle white"></div><p>#FFFFFF</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="messages" class="section">
+  <p class="sponsors-subtitle">WISHES & PRAYERS</p>
+  <h1>Send Love Message</h1>
+  <div class="card">
+    <form id="messageForm">
+      <input type="text" id="msgName" placeholder="Your Name" required>
+      <textarea id="msgText" placeholder="Write a heartfelt message..." rows="4" required></textarea>
+      <button type="submit" class="btn">Send Message</button>
+      <p class="success-msg" id="msgSuccess">✓ Message sent! Thank you!</p>
+    </form>
+  </div>
+</section>
+
+<section id="wall" class="section">
+  <p class="sponsors-subtitle">MESSAGES FROM LOVED ONES</p>
+  <h1>Love Message Wall</h1>
+  <p class="entourage-note">Read the beautiful messages shared by family and friends.</p>
+  <div class="message-grid" id="messageWall"><p>Loading messages...</p></div>
+</section>
+
+<section id="rsvp" class="section">
+  <p class="sponsors-subtitle">WE AWAIT YOUR RESPONSE</p>
+  <h1>RSVP</h1>
+  <div class="card">
+    <form id="rsvpForm">
+      <input type="text" id="rsvpName" placeholder="Your full name">
+
+      <!-- OPTION BUTTONS - WILL YOU ATTEND -->
+      <p class="rsvp-label">Will you attend?</p>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="attending" value="Yes">
+          <span>Yes, I will attend</span>
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="attending" value="No">
+          <span>Sorry, I can't attend</span>
+        </label>
+      </div>
+
+      <input type="number" id="rsvpGuests" placeholder="Number of guests" max="2" min="1" value="">
+      <button type="submit" class="btn">SUBMIT RSVP</button>
+      <p class="success-msg" id="rsvpSuccess">✓ RSVP submitted! Thank you!</p>
+      <p class="error-msg" id="rsvpError" style="display:none; color:#ff6b6b; margin-top:10px;">Please fill out all fields</p>
+    </form>
+  </div>
+</section>
+
+<section id="guestlist" class="section">
+  <p class="sponsors-subtitle">OUR GUESTS</p>
+  <h1>Guest List</h1>
+<div class="attendees-count">
+  <span>Attendees Count:</span>
+  <strong id="totalGuestCount">0</strong>
+</div>
+  <div class="guest-grid" id="guestList"><p>Loading guests...</p></div>
+</section>
+
+<script src="script.js"></script>
+</body>
+</html>
