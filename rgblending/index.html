@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Lending System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="loginOverlay" class="premium-login-overlay">
+    <div class="login-card-vault">
+        
+        <div class="login-brand-header">
+            <div class="company-logo login-logo-view">
+                <span class="rgb">RGB</span>
+                <span class="lending">lending</span>
+            </div>
+            <h2 class="login-tagline-main">Your trusted lending partner.</h2>
+            <p class="login-tagline-sub">"Malinaw na usapan. Malinaw na bayaran."</p>
+        </div>
+
+        <form id="loginFormAction" onsubmit="handleLogin(event)">
+            <div class="login-input-group">
+                <label for="username"><span class="input-icon">👤</span> Username</label>
+                <input type="text" id="username" placeholder="Input username..." required autocomplete="off">
+            </div>
+            
+            <div class="login-input-group">
+                <label for="password"><span class="input-icon">🔒</span> Password</label>
+                <input type="password" id="password" placeholder="Input password..." required>
+            </div>
+
+            <div id="loginError" class="login-error-toast" style="display: none;"></div>
+
+            <button type="submit" class="btn-login-submit-master">
+                LOGIN 🚀
+            </button>
+        </form>
+
+        <div class="login-footer-lock">
+            🛡️ RGB Lending Partner
+        </div>
+    </div>
+</div>
+
+    <div id="mainContainer" class="container">
+        
+        <div class="header-wrapper">
+            <div class="header-left">
+                <div class="company-logo">
+                    <span class="rgb">RGB</span>
+                    <span class="lending">lending</span>
+                </div>
+            </div>
+            
+            <div class="header-center-tagline">
+                <h2 class="tagline-main">Your trusted lending partner.</h2>
+                <p class="tagline-sub">"Malinaw na usapan. Malinaw na bayaran."</p>
+            </div>
+            
+            <div class="header-right">
+                <button class="btn-logout-header-subtle" onclick="logout()">Logout</button>
+            </div>
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #ecf0f1; margin: 15px 0 25px 0;">
+
+
+
+        <div class="totals-wrapper">
+            <div class="total-card total-owed" style="position: relative;">
+                <div class="total-label">💰 Total Lending / Owed</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                    <div class="total-value" id="totalOwed" data-value="₱0.00" style="margin: 0;">••••••</div>
+                    <button class="privacy-eye-btn" onclick="togglePrivacy('totalOwed')" title="🙈">👁️</button>
+                </div>
+               
+            </div>
+
+            <div class="total-card total-interest" style="position: relative;">
+                <div class="total-label">📈 Projected Monthly Interest</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                    <div class="total-value" id="totalInterest" data-value="₱0.00" style="margin: 0;">••••••</div>
+                    <button class="privacy-eye-btn" onclick="togglePrivacy('totalInterest')" title="🙈">👁️</button>
+                </div>
+                
+            </div>
+
+            <div class="total-card total-count">
+                <div class="total-label">👥 Active Loan Accounts</div>
+                <div class="total-value" id="totalCount">0</div>
+                <div class="total-sub">Mga kasalukuyang account</div>
+            </div>
+        </div>
+        <div class="add-btn-wrapper">
+            <button class="btn-open-modal" onclick="openModal('add')">Add New Loan</button>
+            <button class="btn-export" onclick="exportToCSV()">Backup CSV</button>
+            <button class="btn-import" onclick="document.getElementById('importFile').click()">
+                Restore CSV
+                <input type="file" id="importFile" accept=".csv" style="display:none;" onchange="importCSV(event)">
+            </button>
+        </div>
+
+        <div class="records-header">
+            <h3>All Loan Records</h3>
+            <div id="recordCount" class="record-count" style="margin:0; padding:8px 15px; font-size:0.9em;">0 record(s) found</div>
+            <input type="text" id="searchInput" class="search-box" placeholder="Search borrowers...">
+            
+            <div class="top-controls">
+                <button class="filter-btn filter-all active">All List</button>
+                <button class="filter-btn filter-active">Active Debtors</button>
+                <button class="filter-btn status-overdue">Overdue Only</button>
+                <button class="filter-btn status-paid">Settled Paid</button>
+            </div>
+        </div>
+        <div style="overflow-x: auto; border-radius: 6px;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Borrower Name & ID</th>
+                        <th>Contact Number</th>
+                        <th>Loan Amount (₱)</th>
+                        <th>Monthly Interest (%)</th>
+                        <th>Month Interest Amount (₱)</th>
+                        <th>Loan Released</th>
+                        <th>Next Due Date</th>
+                        <th>Loan Status</th>
+                        <th>Payment History & Notes</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="recordsTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Loan Record Form</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form id="loanForm" class="modal-body">
+                <input type="hidden" id="recordId" value="">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="borrowerName">Complete Borrower Name</label>
+                        <input type="text" id="borrowerName" placeholder="Juan Dela Cruz" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="borrowerContact">Contact Number</label>
+                        <input type="tel" id="borrowerContact" placeholder="e.g., 09123456789" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loanAmount">Loan Amount (₱)</label>
+                        <input type="number" id="loanAmount" step="any" placeholder="₱ Ipasok ang halaga (Hal: 10000)" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="interestRate">Monthly Interest %</label>
+                        <input type="number" id="interestRate" step="any" placeholder="% Porsyento (Hal: 5)" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="interestAmount">Month Interest Amount (₱)</label>
+                        <input type="text" id="interestAmount" placeholder="₱ Auto-calculated" readonly style="background-color: #f5f5f5 !important; font-weight: bold; color: #27ae60 !important;">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="startDate">Loan Released Date</label>
+                        <input type="date" id="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Next Due Date</label>
+                        <input type="date" id="dueDate" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="paymentStatus">Loan Status</label>
+                        <select id="paymentStatus">
+                            <option value="In-Progress">In-Progress</option>
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Overdue">Overdue</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="border-top: 2px dashed #ecf0f1; padding-top: 15px; margin-top: 15px;">
+                    <label style="color: #2c3e50; font-size: 1.1em;">Payment Log Entry</label>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 0.8em; color: #7f8c8d;">Date of Payment</label>
+                            <input type="date" id="payDate">
+                        </div>
+                        <div style="flex: 1; min-width: 140px;">
+                            <label style="font-size: 0.8em; color: #7f8c8d;">Amount Paid (₱)</label>
+                            <input type="number" id="payAmount" step="any" placeholder="₱ Hal: 1500">
+                        </div>
+                        <div style="display: flex; align-items: flex-end; min-width: 120px;">
+                            <button type="button" onclick="addNewPaymentRow()" style="background-color: #e67e22; color: white; padding: 12px; font-size: 0.9em; width: 100%; border-radius: 4px;">+ Add Payment</button>
+                        </div>
+                    </div>
+
+                    <label style="font-size: 0.85em; color: #555;">Saved Payment Records History:</label>
+                    <div id="paymentHistoryListWrapper" style="max-height: 150px; overflow-y: auto; background: #f8f9fa; border: 1px solid #ddd; border-radius: 6px; padding: 10px;">
+                        </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="btnAddSubmit" class="btn-add">Save Record</button>
+                    <button type="submit" id="btnUpdate" class="btn-update">Update Record</button>
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <button id="notifToggle" class="notif-toggle" onclick="toggleNotifPanel()">
+        🔔 <span id="notifBadge" class="notif-badge">0</span>
+    </button>
+
+    <div id="notifPanel" class="notif-panel hidden">
+        <div class="notif-header">
+            <div class="notif-header-left">
+                <span>Alert Notification Console</span>
+                <span id="notifPanelBadge" class="notif-badge">0</span>
+            </div>
+            <button class="notif-close" onclick="toggleNotifPanel()">&times;</button>
+        </div>
+        <div id="notifBody" class="notif-body"></div>
+    </div>
+
+    <!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { 
+    getFirestore, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDnlad9nhop6okzaTGiwpWUaVnmKSJYtQI",
+  authDomain: "rgblending1124.firebaseapp.com",
+  projectId: "rgblending1124",
+  storageBucket: "rgblending1124.firebasestorage.app",
+  messagingSenderId: "273189271408",
+  appId: "1:273189271408:web:48a0f1d078d1f4c93d01b5",
+  measurementId: "G-FXJ83ZDM5H"
+};
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Gawing accessible sa window para magamit ng script.js
+  window.db = db;
+  window.firestoreTools = { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, onSnapshot };
+</script>
+
+<!-- Ang iyong script file (gawing type="module" kung kinakailangan o i-load pagkatapos ng Firebase) -->
+<script src="script.js"></script>
+</body>
+</html>
