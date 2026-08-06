@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Lending - Loan Application Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #1b4332;
+            --primary-hover: #2d6a4f;
+            --accent: #52b788;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-dark); min-height: 100vh; padding-bottom: 3rem; }
+
+     .app-header { background: #0f172a; padding: 1rem 2rem; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 100; }
+     .header-brand { font-size: 1.25rem; font-weight: 800; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+     .nav-actions { display: flex; align-items: center; gap: 12px; }
+     .btn-nav { background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.4rem 0.9rem; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
+     .btn-nav:hover { background: rgba(255, 255, 255, 0.2); }
+     .btn-logout { color: #ef4444; border-color: rgba(239, 68, 68, 0.3); }
+     .btn-logout:hover { background: #ef4444; color: white; }
+     .container { max-width: 800px; margin: 2rem auto 0; padding: 0 1rem; }
+     .form-card { background: var(--card-bg); border-radius: 20px; padding: 2.5rem; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.05); border: 1px solid #e2e8f0; }
+     .form-header { border-bottom: 2px solid #f1f5f9; padding-bottom: 1.5rem; margin-bottom: 2rem; text-align: center; }
+     .form-header h2 { color: var(--primary); font-size: 1.8rem; font-weight: 800; margin-bottom: 0.4rem; }
+     .form-header p { color: var(--text-muted); font-size: 0.95rem; }
+     .form-section-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin: 1.8rem 0 1rem; display: flex; align-items: center; gap: 8px; }
+     .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; }
+     .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+     .form-group.full-width { grid-column: 1 / -1; }
+        label { font-size: 0.85rem; font-weight: 700; color: #334155; }
+        input, select, textarea { padding: 0.8rem 1rem; border: 1.5px solid var(--border-color); border-radius: 10px; font-size: 0.95rem; outline: none; background: #fff; transition: border-color 0.2s, box-shadow 0.2s; }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(27, 67, 50, 0.1); }
+        input[readonly] { background-color: #f1f5f9; color: #64748b; cursor: not-allowed; }
+     .field-note { font-size: 0.75rem; color: #64748b; font-weight: 600; }
+     .disbursement-box { background: #f8fafc; border: 1px dashed var(--border-color); border-radius: 12px; padding: 1.25rem; margin-top: 1rem; }
+     .calc-preview-box { background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: 12px; padding: 1.25rem; margin-top: 1.25rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; text-align: center; }
+     .calc-item.label { font-size: 0.72rem; font-weight: 700; color: #166534; text-transform: uppercase; }
+     .calc-item.value { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-top: 0.2rem; }
+     .calc-item.highlight { background: #dcfce7; padding: 0.5rem; border-radius: 8px; }
+     .calc-item.highlight.value { color: #15803d; font-size: 1.35rem; }
+     .signature-container { border: 2px dashed var(--border-color); border-radius: 12px; background: #fafafa; position: relative; text-align: center; overflow: hidden; }
+        canvas#signaturePad { width: 100%; height: 160px; cursor: crosshair; display: block; }
+     .sig-actions { display: flex; justify-content: flex-end; margin-top: 0.5rem; }
+     .btn-clear-sig { background: #e2e8f0; color: #475569; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+     .btn-clear-sig:hover { background: #cbd5e1; }
+     .btn-submit-loan { background: var(--primary); color: white; border: none; width: 100%; padding: 1.1rem; border-radius: 12px; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease; margin-top: 2rem; box-shadow: 0 8px 16px rgba(27, 67, 50, 0.2); display: flex; justify-content: center; align-items: center; gap: 10px; }
+     .btn-submit-loan:hover { background: var(--primary-hover); transform: translateY(-2px); }
+     .btn-submit-loan:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+     .status-msg { padding: 1rem; border-radius: 10px; font-size: 0.9rem; font-weight: 600; margin-bottom: 1.5rem; display: none; text-align: center; }
+     .status-msg.error { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+     .status-msg.success { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+
+        /* BAGONG STYLE PARA SA CAMERA */
+     .camera-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; }
+     .camera-modal.active { display: flex; }
+        #cameraVideo { width: 100%; max-width: 500px; border-radius: 12px; }
+     .id-frame { position: absolute; width: 320px; height: 202px; border: 3px solid #00ff00; border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); pointer-events: none; }
+     .camera-controls { margin-top: 20px; display: flex; gap: 10px; }
+     .btn-camera { padding: 12px 24px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 1rem; }
+     .btn-capture { background: var(--accent); color: white; }
+     .btn-close-cam { background: #dc2626; color: white; }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <a href="index.html" class="header-brand"><i class="fa-solid fa-shield-halved"></i> RGB LENDING</a>
+        <div class="nav-actions">
+            <a href="user-dashboard.html" class="btn-nav"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+            <button class="btn-nav btn-logout" onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="form-card">
+
+            <div class="form-header">
+                <h2>Loan Application Form</h2>
+                <p>Punan ang mga kinakailangang impormasyon upang maproseso ang iyong pautang.</p>
+            </div>
+
+            <div id="statusMessage" class="status-msg"></div>
+
+            <form id="loanApplicationForm" onsubmit="submitLoanApplication(event)">
+
+                <div class="form-section-title"><i class="fa-solid fa-user"></i> 1. Impormasyon ng Nag-a-apply</div>
+                <div class="form-grid">
+                    <div class="form-group full-width"><label>Buong Pangalan (Full Name)</label><input type="text" id="applicantName" placeholder="Kusa itong lalabas..." readonly required></div>
+                    <div class="form-group"><label>Contact Number</label><input type="tel" id="applicantContact" placeholder="09123456789" required></div>
+                    <div class="form-group"><label>Tirahan / Address</label><input type="text" id="applicantAddress" placeholder="Barangay, City, Province" required></div>
+                </div>
+
+                <div class="form-section-title"><i class="fa-solid fa-hand-holding-dollar"></i> 2. Detalye ng Pautang</div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Pumili ng Loan Product</label><select id="loanType" onchange="handleProductChange()" required><option value="">-- Pumili ng Loan Product --</option><option value="Emer Loan">Emer Loan (10% Interest / 30 Days)</option><option value="Personal Loan">Personal Loan (8% Interest / 2-5 Months)</option><option value="Salary Loan">Salary Loan (5% Interest / 6-12 Months)</option></select></div>
+                    <div class="form-group"><label>Halaga ng Inuutang (Loan Amount ₱)</label><input type="number" id="loanAmount" placeholder="Pumili muna ng loan product" oninput="calculateLoanTerms()" required><span class="field-note" id="amountRangeNote">Pumili ng product para sa allowable limit.</span></div>
+                    <div class="form-group"><label>Term / Tagal ng Pagbabayad</label><select id="loanTerm" onchange="calculateLoanTerms()" required disabled><option value="">-- Pumili muna ng Loan Product --</option></select><span class="field-note" id="termNote">Dependent sa napiling Loan Product.</span></div>
+                </div>
+
+                <div class="calc-preview-box">
+                    <div class="calc-item"><div class="label">Interest Rate</div><div class="value" id="dispInterest">0%</div></div>
+                    <div class="calc-item highlight"><div class="label">Monthly Payment</div><div class="value" id="dispMonthlyPayment">₱0.00</div></div>
+                    <div class="calc-item"><div class="label">Total Interest</div><div class="value" id="dispTotalInterest">₱0.00</div></div>
+                    <div class="calc-item"><div class="label">Total Payable</div><div class="value" id="dispTotalPayable">₱0.00</div></div>
+                </div>
+
+                <div class="form-section-title"><i class="fa-solid fa-wallet"></i> 3. Paraan ng Pagpapadala (Disbursement Option)</div>
+                <div class="form-grid">
+                    <div class="form-group full-width"><label>Disbursement Channel</label><select id="disbursementChannel" onchange="handleDisbursementChange()" required><option value="">-- Pumili kung saan ipadala ang pera --</option><option value="GCash">GCash</option><option value="Maya">Maya</option><option value="Bank Transfer">Bank Transfer (BDO, BPI, UnionBank, etc.)</option></select></div>
+                </div>
+                <div id="disbursementFieldsContainer" class="disbursement-box" style="display: none;">
+                    <div class="form-grid">
+                        <div class="form-group" id="bankNameGroup" style="display: none;"><label>Pangalan ng Bangko (Bank Name)</label><input type="text" id="disbursementBankName" placeholder="Hal. BDO, BPI, Landbank"></div>
+                        <div class="form-group"><label id="disbursementAccountNameLabel">Pangalan ng May-ari ng Account</label><input type="text" id="disbursementAccountName" placeholder="Buong pangalan sa account" required></div>
+                        <div class="form-group"><label id="disbursementAccountNumberLabel">Account / Mobile Number</label><input type="text" id="disbursementAccountNumber" placeholder="09XXXXXXXXX o Bank Account Number" required></div>
+                    </div>
+                </div>
+
+                <div class="form-section-title"><i class="fa-solid fa-file-contract"></i> 4. Kaukulang Dokumento at Pirma</div>
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label>Capture Valid ID <span style="color:red">*</span></label>
+                        <button type="button" class="btn-nav" style="width:100%; justify-content:center; background:var(--primary)" onclick="openCamera()"><i class="fa-solid fa-camera"></i> Open Camera with ID Frame</button>
+                        <div id="idPreviewContainer" style="margin-top:10px; text-align:center; display:none">
+                            <canvas id="idCropCanvas" style="border:2px solid var(--border-color); border-radius:8px; max-width:100%; background:#f1f5f9"></canvas>
+                            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:5px">ID Captured</p>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Digital Signature (Pirmahan sa loob ng kahon)</label>
+                        <div class="signature-container"><canvas id="signaturePad"></canvas></div>
+                        <div class="sig-actions"><button type="button" class="btn-clear-sig" onclick="clearSignature()"><i class="fa-solid fa-eraser"></i> Burahin ang Pirma</button></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit-loan" id="btnSubmit"><i class="fa-solid fa-paper-plane"></i> Submit Loan Application</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CAMERA MODAL WITH ID FRAME -->
+    <div class="camera-modal" id="cameraModal">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <div class="id-frame"></div>
+        <div class="camera-controls">
+            <button type="button" class="btn-camera btn-capture" onclick="captureID()"><i class="fa-solid fa-camera"></i> Capture ID</button>
+            <button type="button" class="btn-camera btn-close-cam" onclick="closeCamera()"><i class="fa-solid fa-xmark"></i> Close</button>
+        </div>
+    </div>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script>
+        let currentUserId = null;
+        let signatureCanvas, sigContext;
+        let isDrawing = false;
+        let hasSigned = false;
+        let cameraStream = null;
+        let capturedIdDataUrl = ""; // IDADAGDAG LANG TO
+
+        const PRODUCT_RULES = {
+            "Emer Loan": { minAmount: 500, maxAmount: 10000, rate: 0.10, terms: [{ value: 1, text: "1 Buwan (30 Days Only)" }], note: "Up to ₱10,000 max" },
+            "Personal Loan": { minAmount: 10001, maxAmount: 30000, rate: 0.08, terms: [{ value: 2, text: "2 Buwan" }, { value: 3, text: "3 Buwan" }, { value: 4, text: "4 na Buwan" }, { value: 5, text: "5 Buwan" }], note: "₱10,001 hanggang ₱30,000" },
+            "Salary Loan": { minAmount: 30001, maxAmount: 80000, rate: 0.05, terms: [{ value: 6, text: "6 na Buwan" }, { value: 7, text: "7 Buwan" }, { value: 8, text: "8 Buwan" }, { value: 9, text: "9 na Buwan" }, { value: 10, text: "10 Buwan" }, { value: 11, text: "11 Buwan" }, { value: 12, text: "12 Buwan (1 Taon)" }], note: "₱30,001 hanggang ₱80,000" }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initSignaturePad();
+            const authCheckInterval = setInterval(() => {
+                if (window.auth && window.authTools) {
+                    clearInterval(authCheckInterval);
+                    window.authTools.onAuthStateChanged(window.auth, async (user) => {
+                        if (!user) { window.location.href = "auth.html"; }
+                        else { currentUserId = user.uid; await loadUserProfile(user.uid); checkSelectedLoanProduct(); }
+                    });
+                }
+            }, 200);
+        });
+
+        async function loadUserProfile(uid) {
+            try {
+                if (window.firestoreTools && window.db) {
+                    const { doc, getDoc } = window.firestoreTools;
+                    const docSnap = await getDoc(doc(window.db, "borrower_users", uid));
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+                        document.getElementById('applicantName').value = userData.name || userData.fullName || '';
+                        if (userData.contact) { document.getElementById('applicantContact').value = userData.contact; }
+                    }
+                }
+            } catch (err) { console.error("Error loading profile:", err); }
+        }
+
+        function checkSelectedLoanProduct() {
+            const selectedProduct = localStorage.getItem('selectedLoanProduct');
+            if (selectedProduct && PRODUCT_RULES[selectedProduct]) {
+                const loanTypeSelect = document.getElementById('loanType');
+                if (loanTypeSelect) { loanTypeSelect.value = selectedProduct; handleProductChange(); }
+                localStorage.removeItem('selectedLoanProduct');
+            }
+        }
+
+        function handleProductChange() {
+            const product = document.getElementById('loanType').value;
+            const amountInput = document.getElementById('loanAmount');
+            const termSelect = document.getElementById('loanTerm');
+            const amountNote = document.getElementById('amountRangeNote');
+            const termNote = document.getElementById('termNote');
+            termSelect.innerHTML = "";
+            if (!product ||!PRODUCT_RULES[product]) {
+                amountInput.placeholder = "Pumili muna ng loan product";
+                amountInput.removeAttribute("min"); amountInput.removeAttribute("max");
+                amountNote.textContent = "Pumili ng product para sa allowable limit.";
+                termSelect.disabled = true; termSelect.innerHTML = `<option value="">-- Pumili muna ng Loan Product --</option>`;
+                termNote.textContent = "Dependent sa napiling Loan Product."; calculateLoanTerms(); return;
+            }
+            const rule = PRODUCT_RULES[product];
+            amountInput.min = rule.minAmount; amountInput.max = rule.maxAmount;
+            amountInput.placeholder = `Hal. ₱${rule.minAmount.toLocaleString()} - ₱${rule.maxAmount.toLocaleString()}`;
+            amountNote.textContent = `Limit: ${rule.note}`;
+            termSelect.disabled = false;
+            rule.terms.forEach(t => { const opt = document.createElement('option'); opt.value = t.value; opt.textContent = t.text; termSelect.appendChild(opt); });
+            termNote.textContent = `Pumili mula ${rule.terms[0].text} hanggang ${rule.terms[rule.terms.length - 1].text}`;
+            calculateLoanTerms();
+        }
+
+        function calculateLoanTerms() {
+            const product = document.getElementById('loanType').value;
+            const amount = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const termMonths = parseInt(document.getElementById('loanTerm').value) || 0;
+            if (!product ||!PRODUCT_RULES[product] || amount <= 0 || termMonths <= 0) {
+                document.getElementById('dispInterest').textContent = "0%";
+                document.getElementById('dispMonthlyPayment').textContent = "₱0.00";
+                document.getElementById('dispTotalInterest').textContent = "₱0.00";
+                document.getElementById('dispTotalPayable').textContent = "₱0.00"; return;
+            }
+            const rate = PRODUCT_RULES[product].rate;
+            let monthlyPayment = 0; let totalPayable = 0; let totalInterest = 0;
+            if (termMonths === 1) { totalInterest = amount * rate; totalPayable = amount + totalInterest; monthlyPayment = totalPayable; }
+            else {
+                const numerator = rate * Math.pow(1 + rate, termMonths);
+                const denominator = Math.pow(1 + rate, termMonths) - 1;
+                monthlyPayment = amount * (numerator / denominator);
+                totalPayable = monthlyPayment * termMonths;
+                totalInterest = totalPayable - amount;
+            }
+            document.getElementById('dispInterest').textContent = (rate * 100) + "% / month";
+            document.getElementById('dispMonthlyPayment').textContent = "₱" + monthlyPayment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('dispTotalInterest').textContent = "₱" + totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            document.getElementById('dispTotalPayable').textContent = "₱" + totalPayable.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+
+        function handleDisbursementChange() {
+            const channel = document.getElementById('disbursementChannel').value;
+            const container = document.getElementById('disbursementFieldsContainer');
+            const bankNameGroup = document.getElementById('bankNameGroup');
+            const bankNameInput = document.getElementById('disbursementBankName');
+            const nameLabel = document.getElementById('disbursementAccountNameLabel');
+            const numberLabel = document.getElementById('disbursementAccountNumberLabel');
+            const numberInput = document.getElementById('disbursementAccountNumber');
+            if (!channel) { container.style.display = 'none'; bankNameInput.removeAttribute('required'); return; }
+            container.style.display = 'block';
+            if (channel === 'Bank Transfer') {
+                bankNameGroup.style.display = 'flex'; bankNameInput.setAttribute('required', 'required');
+                nameLabel.textContent = "Pangalan sa Bank Account (Account Name)";
+                numberLabel.textContent = "Bank Account Number"; numberInput.placeholder = "Hal. 1234567890";
+            } else {
+                bankNameGroup.style.display = 'none'; bankNameInput.removeAttribute('required');
+                nameLabel.textContent = `Pangalan sa ${channel} Account`;
+                numberLabel.textContent = `${channel} Mobile Number`; numberInput.placeholder = "09XXXXXXXXX";
+            }
+        }
+
+        // CAMERA FUNCTIONS WITH ID FRAME
+        async function openCamera() {
+            const modal = document.getElementById('cameraModal'); modal.classList.add('active');
+            try { cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); document.getElementById('cameraVideo').srcObject = cameraStream; }
+            catch(err) { alert("Hindi ma-access ang camera: " + err.message); closeCamera(); }
+        }
+        function closeCamera() {
+            document.getElementById('cameraModal').classList.remove('active');
+            if(cameraStream) cameraStream.getTracks().forEach(track => track.stop());
+        }
+        function captureID() {
+            const video = document.getElementById('cameraVideo');
+            const canvas = document.getElementById('idCropCanvas'); const ctx = canvas.getContext('2d');
+            const ID_WIDTH = 320; const ID_HEIGHT = 202;
+            canvas.width = 600; canvas.height = 600 * (ID_HEIGHT / ID_WIDTH);
+            const videoRect = video.getBoundingClientRect();
+            const frameRect = document.querySelector('.id-frame').getBoundingClientRect();
+            const scaleX = video.videoWidth / videoRect.width; const scaleY = video.videoHeight / videoRect.height;
+            const sx = (frameRect.left - videoRect.left) * scaleX; const sy = (frameRect.top - videoRect.top) * scaleY;
+            const sWidth = ID_WIDTH * scaleX; const sHeight = ID_HEIGHT * scaleY;
+            ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
+            capturedIdDataUrl = canvas.toDataURL(); // SAVE AS BASE64
+            document.getElementById('idPreviewContainer').style.display = 'block'; closeCamera();
+        }
+
+        function initSignaturePad() {
+            signatureCanvas = document.getElementById('signaturePad'); sigContext = signatureCanvas.getContext('2d');
+            signatureCanvas.width = signatureCanvas.offsetWidth; signatureCanvas.height = signatureCanvas.offsetHeight;
+            sigContext.lineWidth = 2.5; sigContext.lineCap = 'round'; sigContext.strokeStyle = '#0f172a';
+            signatureCanvas.addEventListener('mousedown', startDrawing); signatureCanvas.addEventListener('mousemove', draw);
+            signatureCanvas.addEventListener('mouseup', stopDrawing); signatureCanvas.addEventListener('mouseleave', stopDrawing);
+            signatureCanvas.addEventListener('touchstart', (e) => { const touch = e.touches[0]; const rect = signatureCanvas.getBoundingClientRect(); startDrawing({ clientX: touch.clientX, clientY: touch.clientY, rect }); });
+            signatureCanvas.addEventListener('touchmove', (e) => { e.preventDefault(); const touch = e.touches[0]; draw({ clientX: touch.clientX, clientY: touch.clientY }); });
+            signatureCanvas.addEventListener('touchend', stopDrawing);
+        }
+        function startDrawing(e) { isDrawing = true; hasSigned = true; const rect = signatureCanvas.getBoundingClientRect(); sigContext.beginPath(); sigContext.moveTo(e.clientX - rect.left, e.clientY - rect.top); }
+        function draw(e) { if (!isDrawing) return; const rect = signatureCanvas.getBoundingClientRect(); sigContext.lineTo(e.clientX - rect.left, e.clientY - rect.top); sigContext.stroke(); }
+        function stopDrawing() { isDrawing = false; }
+        function clearSignature() { sigContext.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height); hasSigned = false; }
+
+        // ISA LANG TO
+        async function submitLoanApplication(e) {
+            e.preventDefault();
+            const statusMsg = document.getElementById('statusMessage');
+            const btnSubmit = document.getElementById('btnSubmit');
+            statusMsg.style.display = 'none';
+
+            const product = document.getElementById('loanType').value;
+            const amount = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const rule = PRODUCT_RULES[product];
+
+            if (rule) {
+                if (amount < rule.minAmount || amount > rule.maxAmount) {
+                    showStatus(`Maling Loan Amount! Ang ${product} ay para lamang sa ₱${rule.minAmount.toLocaleString()} hanggang ₱${rule.maxAmount.toLocaleString()}.`, "error");
+                    return;
+                }
+            }
+            const channel = document.getElementById('disbursementChannel').value;
+            if (!channel) {
+                showStatus("Pumili ng Disbursement Channel para sa pagpapadala ng pautang.", "error");
+                return;
+            }
+            if (!hasSigned) {
+                showStatus("Paki-pirmahan muna ang digital signature box sa ibaba.", "error");
+                return;
+            }
+            if (!capturedIdDataUrl) { // BINAGO: HINDI NA UPLOAD
+                showStatus("Paki-capture muna ang Valid ID gamit ang camera.", "error");
+                return;
+            }
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting Application...`;
+
+            try {
+                const signatureDataUrl = signatureCanvas.toDataURL();
+                const applicationData = {
+                    userId: currentUserId,
+                    applicantName: document.getElementById('applicantName').value,
+                    applicantContact: document.getElementById('applicantContact').value,
+                    applicantAddress: document.getElementById('applicantAddress').value,
+                    loanType: product,
+                    loanAmount: amount,
+                    loanTermMonths: parseInt(document.getElementById('loanTerm').value),
+                    monthlyPayment: parseFloat(document.getElementById('dispMonthlyPayment').textContent.replace('₱', '').replace(/,/g, '')),
+                    disbursementDetails: {
+                        channel: channel,
+                        bankName: channel === 'Bank Transfer'? document.getElementById('disbursementBankName').value : null,
+                        accountName: document.getElementById('disbursementAccountName').value,
+                        accountNumber: document.getElementById('disbursementAccountNumber').value
+                    },
+                    idImageData: capturedIdDataUrl, // BASE64 NA LANG
+                    signatureData: signatureDataUrl,
+                    status: 'Pending',
+                    appliedAt: new Date().toISOString()
+                };
+
+                const { collection, addDoc } = window.firestoreTools;
+                await addDoc(collection(window.db, "loan_applications"), applicationData);
+
+                showStatus("Tagumpay! Naisumite na ang iyong Loan Application. Redirecting sa Dashboard...", "success");
+                setTimeout(() => { window.location.href = "user-dashboard.html"; }, 1500);
+
+            } catch (err) {
+                console.error("Submission error:", err);
+                showStatus("Nagka-error sa pag-submit: " + err.message, "error");
+                btnSubmit.disabled = false;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Submit Loan Application`;
+            }
+        }
+
+        function showStatus(msg, type) { const statusMsg = document.getElementById('statusMessage'); statusMsg.textContent = msg; statusMsg.className = `status-msg ${type}`; statusMsg.style.display = 'block'; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+        async function handleLogout() {
+            if (confirm("Gusto mo bang mag-logout sa iyong account?")) {
+                try { await window.authTools.signOut(window.auth); window.location.href = "auth.html"; }
+                catch (err) { alert("Error on logout: " + err.message); }
+            }
+        }
+    </script>
+</body>
+</html>

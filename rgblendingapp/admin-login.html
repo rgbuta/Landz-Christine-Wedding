@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login Portal</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #0f172a; /* Dark background theme para sa Admin */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .admin-auth-container {
+      background: #1e293b;
+      padding: 2.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      width: 100%;
+      max-width: 400px;
+      color: #f8fafc;
+      border: 1px solid #334155;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .admin-header h2 {
+      font-size: 1.5rem;
+      color: #f8fafc;
+      margin-bottom: 0.5rem;
+    }
+
+    .admin-header p {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0f172a;
+      border: 1px solid #475569;
+      border-radius: 5px;
+      font-size: 1rem;
+      color: #fff;
+      outline: none;
+    }
+
+    .form-group input:focus {
+      border-color: #38bdf8;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #0284c7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 0.5rem;
+    }
+
+    .submit-btn:hover {
+      background-color: #0369a1;
+    }
+
+    .submit-btn:disabled {
+      background-color: #475569;
+      cursor: not-allowed;
+    }
+
+    .alert {
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      display: none;
+      font-size: 0.9rem;
+    }
+
+    .alert-error {
+      background-color: #450a0a;
+      color: #fca5a5;
+      border: 1px solid #991b1b;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-auth-container">
+    <div class="admin-header">
+      <h2>Admin Portal</h2>
+      <p>Authorized personnel only</p>
+    </div>
+
+    <!-- Alert Message -->
+    <div id="alertBox" class="alert alert-error"></div>
+
+    <!-- Admin Login Form -->
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label for="adminEmail">Admin Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@example.com" required />
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" placeholder="••••••••" required />
+      </div>
+      <button type="submit" id="submitBtn" class="submit-btn">Login to Admin Panel</button>
+    </form>
+  </div>
+
+  <!-- Firebase Bridge SDK Import -->
+  <script type="module" src="firebase-config.js"></script>
+
+  <script>
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    const alertBox = document.getElementById('alertBox');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showAlert(message) {
+      alertBox.textContent = message;
+      alertBox.style.display = 'block';
+    }
+
+    function hideAlert() {
+      alertBox.style.display = 'none';
+      alertBox.textContent = '';
+    }
+
+    adminLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideAlert();
+
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value;
+
+      // Siguraduhing na-load na ang Firebase mula sa firebase-config.js
+      if (!window.auth || !window.authTools) {
+        showAlert('Initializing system... Please try again in 2 seconds.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Logging in...';
+
+      try {
+        const { signInWithEmailAndPassword } = window.authTools;
+        
+        // Directly authenticate gamit ang Firebase Auth
+        await signInWithEmailAndPassword(window.auth, email, password);
+
+        // Pag matagumpay, lilipat sa admin.html
+        window.location.href = "admin.html";
+
+      } catch (error) {
+        console.error('Login error:', error.code, error.message);
+        
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Login to Admin Panel';
+
+        // Friendly error messages
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          showAlert('Access denied. Invalid email or password.');
+        } else if (error.code === 'auth/too-many-requests') {
+          showAlert('Too many failed attempts. Please try again later.');
+        } else {
+          showAlert('Failed to login: ' + error.message);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
