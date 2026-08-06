@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Lending - Admin Portal Authentication</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; }
+        
+        .login-card { background: white; width: 100%; max-width: 420px; border-radius: 16px; padding: 2.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .brand-header { text-align: center; margin-bottom: 2rem; }
+        .brand-header i { font-size: 3rem; color: #1b4332; margin-bottom: 0.5rem; }
+        .brand-header h2 { color: #1b4332; font-weight: 800; }
+        
+        .form-group { margin-bottom: 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group label { font-size: 0.85rem; font-weight: 700; color: #475569; }
+        .form-group input { padding: 0.8rem; border: 1.5px solid #cbd5e1; border-radius: 8px; outline: none; font-size: 0.95rem; }
+        .form-group input:focus { border-color: #1b4332; }
+
+        .btn-login { background: #1b4332; color: white; border: none; width: 100%; padding: 0.85rem; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: background 0.2s; margin-top: 1rem; }
+        .btn-login:hover { background: #2d6a4f; }
+
+        .error-message { background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 6px; font-size: 0.85rem; margin-bottom: 1rem; display: none; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="brand-header">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h2>RGB ADMIN PORTAL</h2>
+            <p style="font-size:0.85rem; color:#64748b;">Mag-login gamit ang iyong Admin Credentials</p>
+        </div>
+
+        <div id="loginError" class="error-message"></div>
+
+        <form onsubmit="handleAdminLogin(event)">
+            <div class="form-group">
+                <label>Admin Email Address</label>
+                <input type="email" id="adminEmail" required placeholder="admin@rgblending.com">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="adminPassword" required placeholder="••••••••">
+            </div>
+
+            <button type="submit" class="btn-login" id="btnLogin">Login to Dashboard</button>
+        </form>
+    </div>
+
+    <!-- Firebase Loader -->
+    <script type="module" src="firebase-config.js"></script>
+
+    <script>
+        async function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errBox = document.getElementById('loginError');
+            const btn = document.getElementById('btnLogin');
+
+            errBox.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = "Authenticating...";
+
+            try {
+                if (!window.auth || !window.authTools) throw new Error("Firebase Auth bridge missing.");
+                const { signInWithEmailAndPassword } = window.authTools;
+                
+                await signInWithEmailAndPassword(window.auth, email, password);
+                // On Success redirect to Admin Dashboard
+                window.location.href = "admin.html";
+
+            } catch (err) {
+                errBox.textContent = "Login Failed: Invalid Email or Password.";
+                errBox.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Login to Dashboard";
+            }
+        }
+    </script>
+</body>
+</html>
