@@ -115,6 +115,7 @@
         <div class="payment-content">
             <h2><i class="fa-solid fa-qrcode"></i> Magbayad ng Loan</h2>
             <p style="color:#64748b; font-size:0.9rem;">Amount to Pay: <b id="payAmount" style="color:#2563eb;"></b></p>
+            <p>Scan the QR code or use details below to pay your loan.</p>
             <div class="qr-box">
                 <img src="paynow.jpg" alt="Bank QR">
             </div>
@@ -123,9 +124,10 @@
                 <p><b>Account Name:</b> ROLANDO BUTA JR.</p>
                 <p><b>Account No:</b> 1150-1563-301</p>
             </div>
+            <p>Send us your receipt as a proof of payment.</p>
             <label class="upload-box" for="paymentProof">
                 <i class="fa-solid fa-images"></i>
-                <p id="uploadText">Select from Photo Gallery</p>
+                <p id="uploadText">Upload Receipt Screenshot</p>
                 <input type="file" id="paymentProof" accept="image/*" onchange="showFileName()">
             </label>
             <button class="btn-pay" onclick="submitPayment()" id="submitPayBtn"><i class="fa-solid fa-paper-plane"></i> Submit Payment</button>
