@@ -1,37 +1,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
-    getFirestore, 
-    collection, 
-    onSnapshot, 
-    addDoc, 
-    doc, 
-    setDoc,
-    getDoc,
-    updateDoc, 
-    deleteDoc, 
-    query, 
-    where,
-    getDocs,
-    orderBy,          // DAGDAG TO
-    serverTimestamp   // DAGDAG TO
+    getFirestore, collection, onSnapshot, addDoc, doc, setDoc, getDoc, updateDoc, deleteDoc, query, where, getDocs, orderBy, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword,
-    signOut, 
-    onAuthStateChanged 
+    getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, sendEmailVerification, sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
 
-// DAGDAG: FIREBASE STORAGE
-import {
-    getStorage,
-    ref,
-    uploadBytes,
-    getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
-
-// Your Firebase Config Credentials
 const firebaseConfig = {
     apiKey: "AIzaSyDnlad9nhop6okzaTGiwpWUaVnmKSJYtQI",
     authDomain: "rgblending1124.firebaseapp.com",
@@ -42,47 +17,26 @@ const firebaseConfig = {
     measurementId: "G-FXJ83ZDM5H"
 };
 
-// Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const storage = getStorage(app); // INIT STORAGE
+const storage = getStorage(app);
 
-// Make instances globally available
 window.db = db;
 window.auth = auth;
-window.storage = storage; // EXPOSE STORAGE
+window.storage = storage;
 
-// Expose Firestore Tools
-window.firestoreTools = { 
-    collection, 
-    onSnapshot, 
-    addDoc, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    updateDoc, 
-    deleteDoc, 
-    query, 
-    where,
-    getDocs,
-    orderBy,         // DAGDAG TO
-    serverTimestamp  // DAGDAG TO
-};
+window.firestoreTools = { collection, onSnapshot, addDoc, doc, setDoc, getDoc, updateDoc, deleteDoc, query, where, getDocs, orderBy, serverTimestamp };
 
-// Expose Auth Tools
 window.authTools = { 
     signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, 
     signOut, 
-    onAuthStateChanged 
+    onAuthStateChanged,
+    sendEmailVerification,
+    sendPasswordResetEmail
 };
 
-// Expose Storage Tools
-window.storageTools = {
-    ref,
-    uploadBytes,
-    getDownloadURL
-};
+window.storageTools = { ref, uploadBytes, getDownloadURL };
 
 console.log("Firebase initialized successfully for rgblending1124.");
