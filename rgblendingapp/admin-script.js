@@ -5,8 +5,16 @@ let searchQuery = '';
 let currentViewLoan = null;
 let currentViewPayment = null;
 
-const SENDGRID_API_KEY = "";
-const SEMAPHORE_API_KEY = "";
+// ========== EMAILJS CONFIG ==========
+    const EMAILJS_PUBLIC_KEY = "lJatpfNPqsxZc2BgW";
+    const EMAILJS_SERVICE_ID = "service_cmxyohi"; // Palitan mo ng Service ID mo sa EmailJS
+const EMAILJS_TEMPLATE_APPROVED = "template_loan_approved";
+const EMAILJS_TEMPLATE_REMINDER = "template_due_reminder";
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+// =====================================
+
+// REMOVED: SENDGRID_API_KEY at SEMAPHORE_API_KEY
 
 // NEW: PRODUCT PAYMENT RULES
 const PRODUCT_PAYMENT_FREQ = {
@@ -70,10 +78,60 @@ function formatPeso(amount) {
     return Number(amount || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
-function toggleSidebar() {
+// HELPER: KUHA NG EMAIL NI BORROWER
+async function getBorrowerEmail(userId) {
+    try {
+        const { doc, getDoc } = window.firestoreTools;
+        const userSnap = await getDoc(doc(window.db, "borrower_users", userId));
+        if(userSnap.exists()){
+            return userSnap.data().email || null;
+        }
+    } catch(err) { console.error("Error getting email:", err); }
+    return null;
+}
+
+// FIXED: GAWING GLOBAL
+window.toggleSidebar = function() {
     document.getElementById('sidebar').classList.toggle('active');
 }
 
+// DELETED: sendSMS via Semaphore
+
+// NEW: SEND APPROVAL EMAIL VIA EMAILJS
+async function sendApprovalEmail(loan) {
+    const paymentPerCycle = getPaymentAmount(loan);
+    const freqText = loan.loanType === 'ATM Sangla'? 'Every 15th & 30th' : 'Monthly';
+    const dueDateFormatted = loan.dueDate? new Date(loan.dueDate).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' }) : 'N/A';
+    const borrowerEmail = await getBorrowerEmail(loan.userId);
+
+    if(!borrowerEmail) {
+        alert("⚠️ Walang email si borrower: " + loan.applicantName);
+        return;
+    }
+
+    const templateParams = {
+        to_email: borrowerEmail,
+        to_name: loan.applicantName,
+        applicant_name: loan.applicantName,
+        loan_type: loan.loanType,
+        loan_amount: formatPeso(loan.loanAmount),
+        due_date: dueDateFormatted,
+        payment_amount: formatPeso(paymentPerCycle),
+        frequency: freqText
+    };
+
+    console.log("📧 SENDING EMAIL WITH:", templateParams); // PARA MAKITA SA CONSOLE
+
+    try {
+        const res = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_APPROVED, templateParams);
+        console.log("✅ EmailJS Response:", res);
+        alert(`Status updated to Active! Email sent to ${borrowerEmail}`);
+    } catch(err) {
+        console.error("❌ FULL EMAIL ERROR:", err);
+        alert("Error sending email: " + JSON.stringify(err));
+        throw err;
+    }
+}
 window.addEventListener('DOMContentLoaded', () => {
     const checkAuthInterval = setInterval(() => {
         if (window.auth) {
@@ -130,7 +188,8 @@ function updateCounts() {
     document.getElementById('count-upcoming').textContent = allLoansData.filter(l => l.status === 'Active' && l.dueDate && new Date(l.dueDate) <= in5Days && new Date(l.dueDate) >= today).length;
 }
 
-function filterLoans(filterType) {
+// FIXED: GAWING GLOBAL
+window.filterLoans = function(filterType) {
     currentFilter = filterType;
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`btn-${filterType.toLowerCase()}`).classList.add('active');
@@ -163,7 +222,8 @@ function filterLoans(filterType) {
     if(window.innerWidth < 992) toggleSidebar();
 }
 
-function handleSearch() {
+// FIXED: GAWING GLOBAL
+window.handleSearch = function() {
     searchQuery = document.getElementById('searchInput').value.toLowerCase().trim();
     renderTable();
 }
@@ -258,7 +318,8 @@ function renderTable() {
     });
 }
 
-function switchTab(tabName) {
+// FIXED: GAWING GLOBAL
+window.switchTab = function(tabName) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector(`.tab-btn[onclick="switchTab('${tabName}')"]`).classList.add('active');
     document.getElementById('tab-details').style.display = tabName === 'details'? 'block' : 'none';
@@ -266,7 +327,8 @@ function switchTab(tabName) {
     if(tabName === 'payments' && currentViewLoan) { loadPaymentHistory(currentViewLoan.id, currentViewLoan); }
 }
 
-async function viewDetails(loan) {
+// FIXED: GAWING GLOBAL
+window.viewDetails = async function(loan) {
     currentViewLoan = loan;
     const modal = document.getElementById('viewModal');
     const tabDetails = document.getElementById('tab-details');
@@ -318,17 +380,19 @@ async function viewDetails(loan) {
     switchTab('details');
 }
 
-function closeModal() { document.getElementById('viewModal').classList.remove('active'); }
+// FIXED: GAWING GLOBAL
+window.closeModal = function() { document.getElementById('viewModal').classList.remove('active'); }
 
-async function updateLoanStatus(loanId, newStatus) {
+// FIXED: GAWING GLOBAL + WITH AUTO EMAIL
+window.updateLoanStatus = async function(loanId, newStatus) {
     if (!confirm(`Sigurado ka bang gusto mong palitan ang status sa ${newStatus.toUpperCase()}?`)) return;
     try {
         const { doc, updateDoc, serverTimestamp } = window.firestoreTools;
         const loanRef = doc(window.db, "loan_applications", loanId);
         let updateData = { status: newStatus, updatedAt: serverTimestamp() };
+        const loan = allLoansData.find(l => l.id === loanId);
 
         if(newStatus === 'Active'){
-            const loan = allLoansData.find(l => l.id === loanId);
             const approvedDate = new Date();
             const firstDueDate = getNextDueDate(approvedDate, loan.loanType, 0);
 
@@ -340,7 +404,14 @@ async function updateLoanStatus(loanId, newStatus) {
             updateData.agreementPdfUrl = pdfUrl;
         }
         await updateDoc(loanRef, updateData);
-        alert(`Status updated to ${newStatus}!`);
+
+        // AUTO SEND EMAIL PAG APPROVED
+        if(newStatus === 'Active') {
+            await sendApprovalEmail({...loan,...updateData});
+            alert(`Status updated to ${newStatus}! Email sent to borrower.`);
+        } else {
+            alert(`Status updated to ${newStatus}!`);
+        }
         closeModal();
     } catch (err) {
         alert("Failed to update status: " + err.message);
@@ -431,7 +502,8 @@ async function generateAndUploadAgreement(loan) {
     }
 }
 
-function openPaymentModal(loan) {
+// FIXED: GAWING GLOBAL
+window.openPaymentModal = function(loan) {
     const paymentPerCycle = getPaymentAmount(loan);
     document.getElementById('paymentLoanDocId').value = loan.id;
     document.getElementById('paymentLoanId').textContent = loan.id.substring(0,8).toUpperCase();
@@ -442,9 +514,11 @@ function openPaymentModal(loan) {
     document.getElementById('paymentModal').classList.add('active');
 }
 
-function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
+// FIXED: GAWING GLOBAL
+window.closePaymentModal = function() { document.getElementById('paymentModal').classList.remove('active'); }
 
-async function submitPayment(event) {
+// FIXED: GAWING GLOBAL
+window.submitPayment = async function(event) {
     event.preventDefault();
     const loanId = document.getElementById('paymentLoanDocId').value;
     const amount = parseFloat(parseFloat(document.getElementById('paymentAmount').value).toFixed(2));
@@ -553,7 +627,62 @@ function getDueThisWeekLoans() {
     return allLoansData.filter(l => l.status === 'Active' && l.dueDate && new Date(l.dueDate) <= in7Days && new Date(l.dueDate) >= today);
 }
 
-function generateLoanAgreement() {
+// NEW: SEND DUE REMINDER EMAILS
+window.sendDueReminders = async function() {
+    if(!confirm("Send Email reminders to all borrowers with due dates in the next 3 days?")) return;
+
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const in3Days = new Date();
+    in3Days.setDate(today.getDate() + 3);
+    in3Days.setHours(23,59,59,999);
+
+    const dueLoans = allLoansData.filter(l => {
+        if(l.status!== 'Active' ||!l.dueDate) return false;
+        const dueDate = new Date(l.dueDate);
+        return dueDate >= today && dueDate <= in3Days;
+    });
+
+    if(dueLoans.length === 0){ alert("Wala pang loans na due in the next 3 days."); return; }
+
+    let successCount = 0;
+    let failCount = 0;
+    const btn = document.getElementById('sendReminderBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending ${dueLoans.length} Emails...`;
+    btn.disabled = true;
+
+    for(const loan of dueLoans){
+        try {
+            const paymentPerCycle = getPaymentAmount(loan);
+            const dueDateFormatted = new Date(loan.dueDate).toLocaleDateString('en-PH', { month: 'long', day: 'numeric', year: 'numeric' });
+            const borrowerEmail = await getBorrowerEmail(loan.userId);
+            if(!borrowerEmail) { failCount++; continue; }
+
+            const templateParams = {
+                to_email: borrowerEmail,
+                applicant_name: loan.applicantName,
+                loan_type: loan.loanType,
+                payment_amount: formatPeso(paymentPerCycle),
+                due_date: dueDateFormatted
+            };
+            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_REMINDER, templateParams);
+            successCount++;
+            await new Promise(resolve => setTimeout(resolve, 700)); // delay para di ma-block
+
+        } catch(err) {
+            console.error("Email Failed for:", loan.applicantName, err);
+            failCount++;
+        }
+    }
+
+    btn.innerHTML = originalText;
+    btn.disabled = false;
+    alert(`Email Reminders Complete! \n\nSuccess: ${successCount}\nFailed: ${failCount}`);
+}
+
+// FIXED: GAWING GLOBAL
+window.generateLoanAgreement = function() {
     if(!currentViewLoan) return alert("No loan selected. Please click 'View' first.");
     const loan = currentViewLoan;
     const { jsPDF } = window.jspdf || {};
@@ -628,8 +757,8 @@ function generateLoanAgreement() {
     }
 }
 
-// PAYMENT APPROVAL FUNCTIONS
-function viewPaymentProof(paymentId) {
+// FIXED: GAWING GLOBAL
+window.viewPaymentProof = function(paymentId) {
     const payment = allPaymentsData.find(p => p.id === paymentId);
     if(!payment) return alert("Payment not found");
     currentViewPayment = payment;
@@ -644,7 +773,7 @@ function viewPaymentProof(paymentId) {
             <div class="detail-item"><label>Loan ID</label><p>${payment.loanId.substring(0,8).toUpperCase()}</p></div>
             <div class="detail-item full-width"><label>Payment Proof</label>
                 ${proofUrl
-               ? `<img src="${proofUrl}" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Not+Found'" onclick="window.open(this.src)" style="width:100%; max-height:400px; object-fit:contain; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer">`
+            ? `<img src="${proofUrl}" onerror="this.src='https://via.placeholder.com/600x400?text=Image+Not+Found'" onclick="window.open(this.src)" style="width:100%; max-height:400px; object-fit:contain; border:2px solid #e2e8f0; border-radius:8px; cursor:pointer">`
                     : `<p style="color:red; text-align:center; padding:2rem">No proof image uploaded</p>`
                 }
             </div>
@@ -653,12 +782,14 @@ function viewPaymentProof(paymentId) {
     document.getElementById('paymentProofModal').classList.add('active');
 }
 
-function closePaymentProofModal() {
+// FIXED: GAWING GLOBAL
+window.closePaymentProofModal = function() {
     document.getElementById('paymentProofModal').classList.remove('active');
     currentViewPayment = null;
 }
 
-async function approvePayment(paymentId = null) {
+// FIXED: GAWING GLOBAL
+window.approvePayment = async function(paymentId = null) {
     const payment = paymentId? allPaymentsData.find(p => p.id === paymentId) : currentViewPayment;
     if(!payment) return alert("Payment not found");
     if(!confirm("Approve this payment?")) return;
@@ -706,7 +837,8 @@ async function approvePayment(paymentId = null) {
     }
 }
 
-async function rejectPayment(paymentId = null) {
+// FIXED: GAWING GLOBAL
+window.rejectPayment = async function(paymentId = null) {
     const payment = paymentId? allPaymentsData.find(p => p.id === paymentId) : currentViewPayment;
     if(!payment) return alert("Payment not found");
     if(!confirm("Reject this payment? Borrower will need to resubmit.")) return;
@@ -730,7 +862,8 @@ async function rejectPayment(paymentId = null) {
     }
 }
 
-function handleLogout() {
+// FIXED: GAWING GLOBAL
+window.handleLogout = function() {
     if (confirm("Are you sure you want to logout?")) {
         window.auth.signOut().then(() => { window.location.href = "admin-login.html"; });
     }
